@@ -10,3 +10,6 @@ fields:
 
   ### soft delete 
   deletedAt: DateTime?
+
+  ### The server id of the server who created the channel 
+  environmentId: int?, scope=serverOnly

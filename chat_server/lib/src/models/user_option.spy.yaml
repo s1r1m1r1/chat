@@ -1,0 +1,7 @@
+### Represents a chat channel.
+class: UserOption 
+table: user_option 
+fields:
+  userId: int 
+  ### The id of the env.
+  byIndexEnv: EnvironmentEnum, default=dev  

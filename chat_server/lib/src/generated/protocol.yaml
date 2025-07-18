@@ -2,4 +2,8 @@ admin:
   - createChannel:
   - deleteChannel:
 channels:
+  - getAllChannels:
   - getChannels:
+  - createChannel:
+env:
+  - getId:

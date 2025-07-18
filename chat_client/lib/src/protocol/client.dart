@@ -51,10 +51,47 @@ class EndpointChannels extends _i1.EndpointRef {
   @override
   String get name => 'channels';
 
-  _i2.Future<List<_i3.Channel>> getChannels() =>
+  _i2.Future<List<_i3.Channel>> getAllChannels() =>
+      caller.callServerEndpoint<List<_i3.Channel>>(
+        'channels',
+        'getAllChannels',
+        {},
+      );
+
+  _i2.Future<List<_i3.Channel>> getChannels({required int environmentId}) =>
       caller.callServerEndpoint<List<_i3.Channel>>(
         'channels',
         'getChannels',
+        {'environmentId': environmentId},
+      );
+
+  _i2.Future<_i3.Channel> createChannel({
+    required String name,
+    required String channel,
+    required int environmentId,
+  }) =>
+      caller.callServerEndpoint<_i3.Channel>(
+        'channels',
+        'createChannel',
+        {
+          'name': name,
+          'channel': channel,
+          'environmentId': environmentId,
+        },
+      );
+}
+
+/// {@category Endpoint}
+class EndpointEnv extends _i1.EndpointRef {
+  EndpointEnv(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'env';
+
+  /// return id
+  _i2.Future<int> getId() => caller.callServerEndpoint<int>(
+        'env',
+        'getId',
         {},
       );
 }
@@ -98,6 +135,7 @@ class Client extends _i1.ServerpodClientShared {
         ) {
     admin = EndpointAdmin(this);
     channels = EndpointChannels(this);
+    env = EndpointEnv(this);
     modules = Modules(this);
   }
 
@@ -105,12 +143,15 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointChannels channels;
 
+  late final EndpointEnv env;
+
   late final Modules modules;
 
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
         'admin': admin,
         'channels': channels,
+        'env': env,
       };
 
   @override

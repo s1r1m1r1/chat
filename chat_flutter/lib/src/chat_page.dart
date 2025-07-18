@@ -2,10 +2,6 @@ import 'package:chat_flutter/main.dart';
 import 'package:flutter/material.dart';
 import 'package:serverpod_chat_flutter/serverpod_chat_flutter.dart';
 import 'package:custom_clippers/custom_clippers.dart';
-import 'package:flutter_animated_icons/flutter_animated_icons.dart';
-import 'package:flutter_animated_icons/lottiefiles.dart';
-import 'package:flutter_animated_icons/useanimations.dart';
-import 'package:lottie/lottie.dart';
 
 /// Shows the ChatView and ChatInput for a chat controller.
 class ChatPage extends StatelessWidget {
@@ -39,7 +35,7 @@ class ChatPage extends StatelessWidget {
                   message: current.message,
                   senderName: current.senderInfo?.userName ?? '',
                   onTap: () {
-                    print('onTap');
+                    debugPrint('onTap');
                   },
                 );
               }),
@@ -85,21 +81,6 @@ class _MessageBox extends StatefulWidget {
 
 class _MessageBoxState extends State<_MessageBox>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _animController;
-  @override
-  void initState() {
-    super.initState();
-    _animController =
-        AnimationController(vsync: this, duration: Duration(seconds: 4));
-    _animController.repeat();
-  }
-
-  @override
-  void dispose() {
-    _animController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final messageStyle = TextStyle(color: Colors.black, fontSize: 14);
@@ -122,7 +103,6 @@ class _MessageBoxState extends State<_MessageBox>
         if (!widget.sameSender) leading else const SizedBox(width: 34),
         Flexible(
           child: ClipPath(
-            // clipper: UpperNipMessageClipper(MessageType.send),
             clipper: !widget.sameSender
                 ? UpperNipMessageClipper(
                     widget.isUser ? MessageType.send : MessageType.receive,
@@ -195,7 +175,7 @@ class _MessageBoxState extends State<_MessageBox>
           ),
         )
       ];
-
+// start build
       return Padding(
         padding: const EdgeInsets.only(bottom: 2.0),
         child: Align(
@@ -211,6 +191,7 @@ class _MessageBoxState extends State<_MessageBox>
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  // some manipulation to reorder row
                   children: widget.isUser ? rowKids.reversed.toList() : rowKids,
                 ),
               ],

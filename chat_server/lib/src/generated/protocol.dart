@@ -14,8 +14,12 @@ import 'package:serverpod/protocol.dart' as _i2;
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i3;
 import 'package:serverpod_chat_server/serverpod_chat_server.dart' as _i4;
 import 'channel.dart' as _i5;
-import 'package:chat_server/src/generated/channel.dart' as _i6;
+import 'environment_enum.dart' as _i6;
+import 'user_option.dart' as _i7;
+import 'package:chat_server/src/generated/channel.dart' as _i8;
 export 'channel.dart';
+export 'environment_enum.dart';
+export 'user_option.dart';
 
 class Protocol extends _i1.SerializationManagerServer {
   Protocol._();
@@ -56,11 +60,62 @@ class Protocol extends _i1.SerializationManagerServer {
           isNullable: true,
           dartType: 'DateTime?',
         ),
+        _i2.ColumnDefinition(
+          name: 'environmentId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
       ],
       foreignKeys: [],
       indexes: [
         _i2.IndexDefinition(
           indexName: 'channel_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            )
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        )
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'user_option',
+      dartName: 'UserOption',
+      schema: 'public',
+      module: 'chat',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'user_option_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'byIndexEnv',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'protocol:EnvironmentEnum',
+          columnDefault: '0',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'user_option_pkey',
           tableSpace: null,
           elements: [
             _i2.IndexElementDefinition(
@@ -89,11 +144,23 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i5.Channel) {
       return _i5.Channel.fromJson(data) as T;
     }
+    if (t == _i6.EnvironmentEnum) {
+      return _i6.EnvironmentEnum.fromJson(data) as T;
+    }
+    if (t == _i7.UserOption) {
+      return _i7.UserOption.fromJson(data) as T;
+    }
     if (t == _i1.getType<_i5.Channel?>()) {
       return (data != null ? _i5.Channel.fromJson(data) : null) as T;
     }
-    if (t == List<_i6.Channel>) {
-      return (data as List).map((e) => deserialize<_i6.Channel>(e)).toList()
+    if (t == _i1.getType<_i6.EnvironmentEnum?>()) {
+      return (data != null ? _i6.EnvironmentEnum.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i7.UserOption?>()) {
+      return (data != null ? _i7.UserOption.fromJson(data) : null) as T;
+    }
+    if (t == List<_i8.Channel>) {
+      return (data as List).map((e) => deserialize<_i8.Channel>(e)).toList()
           as T;
     }
     try {
@@ -114,6 +181,12 @@ class Protocol extends _i1.SerializationManagerServer {
     if (className != null) return className;
     if (data is _i5.Channel) {
       return 'Channel';
+    }
+    if (data is _i6.EnvironmentEnum) {
+      return 'EnvironmentEnum';
+    }
+    if (data is _i7.UserOption) {
+      return 'UserOption';
     }
     className = _i2.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -138,6 +211,12 @@ class Protocol extends _i1.SerializationManagerServer {
     }
     if (dataClassName == 'Channel') {
       return deserialize<_i5.Channel>(data['data']);
+    }
+    if (dataClassName == 'EnvironmentEnum') {
+      return deserialize<_i6.EnvironmentEnum>(data['data']);
+    }
+    if (dataClassName == 'UserOption') {
+      return deserialize<_i7.UserOption>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -177,6 +256,8 @@ class Protocol extends _i1.SerializationManagerServer {
     switch (t) {
       case _i5.Channel:
         return _i5.Channel.t;
+      case _i7.UserOption:
+        return _i7.UserOption.t;
     }
     return null;
   }
