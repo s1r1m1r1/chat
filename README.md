@@ -1,4 +1,7 @@
-# Chat example
+# Chat 
+
+a Fork of https://github.com/serverpod/serverpod/tree/main/examples/chat
+
 
 This example showcases Serverpod's chat and auth modules. It demonstrates how to build a basic chat application with multiple chat channels.
 
