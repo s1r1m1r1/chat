@@ -225,14 +225,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.17.0"
-  mime:
-    dependency: transitive
-    description:
-      name: mime
-      sha256: "41a20518f0cb1256669420fdba0cd90d21561e560ac240f26ef8322e45bb7ed6"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   mustache_template:
     dependency: transitive
     description:
@@ -313,14 +305,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
-  relic:
-    dependency: transitive
-    description:
-      name: relic
-      sha256: aa2fb0f448220bd728a07eb5290f11107f8ab9fc6d24de93730f6eacee907fc7
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.1"
   retry:
     dependency: transitive
     description:
@@ -348,37 +332,42 @@ packages:
   serverpod:
     dependency: "direct main"
     description:
-      path: "../../../packages/serverpod"
-      relative: true
-    source: path
+      name: serverpod
+      sha256: ffb358e9ff84bf546ee612b4b5a5f5556bd9840e4a8f06d825efb77a4dd3009e
+      url: "https://pub.dev"
+    source: hosted
     version: "2.9.1"
   serverpod_auth_server:
     dependency: "direct main"
     description:
-      path: "../../../modules/serverpod_auth/serverpod_auth_server"
-      relative: true
-    source: path
+      name: serverpod_auth_server
+      sha256: ad393f09b5ed82b624c9d299b61d945fb07729a0a704faa67795588200168369
+      url: "https://pub.dev"
+    source: hosted
     version: "2.9.1"
   serverpod_chat_server:
     dependency: "direct main"
     description:
-      path: "../../../modules/serverpod_chat/serverpod_chat_server"
-      relative: true
-    source: path
+      name: serverpod_chat_server
+      sha256: "9f7d717b5ffef5864242d3992a6b5fdbc6bcd2b0c8b1b33d861edae3159b2cd1"
+      url: "https://pub.dev"
+    source: hosted
     version: "2.9.1"
   serverpod_serialization:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "../../../packages/serverpod_serialization"
-      relative: true
-    source: path
+      name: serverpod_serialization
+      sha256: c301a5e45610c062e51e1ba580f51f3257c3404ce2dd2f7e216dccbd93869502
+      url: "https://pub.dev"
+    source: hosted
     version: "2.9.1"
   serverpod_shared:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "../../../packages/serverpod_shared"
-      relative: true
-    source: path
+      name: serverpod_shared
+      sha256: "4c88ca57d90138a01d70a5e28f206c86f9ec43a9215de06ee6a5d0c95049d519"
+      url: "https://pub.dev"
+    source: hosted
     version: "2.9.1"
   source_span:
     dependency: transitive
@@ -500,22 +489,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
-  web_socket:
-    dependency: transitive
-    description:
-      name: web_socket
-      sha256: "34d64019aa8e36bf9842ac014bb5d2f5586ca73df5e4d9bf5c936975cae6982c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
-  web_socket_channel:
-    dependency: transitive
-    description:
-      name: web_socket_channel
-      sha256: d645757fb0f4773d602444000a8131ff5d48c9e47adfe9772652dd1a4f2d45c8
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.3"
   x509:
     dependency: transitive
     description:

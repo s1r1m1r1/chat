@@ -704,60 +704,68 @@ packages:
     source: hosted
     version: "0.28.0"
   serverpod_auth_client:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "../../../modules/serverpod_auth/serverpod_auth_client"
-      relative: true
-    source: path
+      name: serverpod_auth_client
+      sha256: "41615696ff57d86e45dbbd8b51f48e914b3c1719b229e8b01ebd937c983ae1ad"
+      url: "https://pub.dev"
+    source: hosted
     version: "2.9.1"
   serverpod_auth_email_flutter:
     dependency: "direct main"
     description:
-      path: "../../../modules/serverpod_auth/serverpod_auth_email_flutter"
-      relative: true
-    source: path
+      name: serverpod_auth_email_flutter
+      sha256: b3f681bc0f7bce538e32c4b0b94cf327e529eb19af7c0ca7d9c74d6554ee9e31
+      url: "https://pub.dev"
+    source: hosted
     version: "2.9.1"
   serverpod_auth_shared_flutter:
     dependency: "direct main"
     description:
-      path: "../../../modules/serverpod_auth/serverpod_auth_shared_flutter"
-      relative: true
-    source: path
+      name: serverpod_auth_shared_flutter
+      sha256: f63ce3f663d41bee2c0235119d5597ce655ad777c74b507c49666eed0ec9c040
+      url: "https://pub.dev"
+    source: hosted
     version: "2.9.1"
   serverpod_chat_client:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "../../../modules/serverpod_chat/serverpod_chat_client"
-      relative: true
-    source: path
+      name: serverpod_chat_client
+      sha256: "0e2f592a9cc6fb10035c39fa8d21f6bd6e303aebe9b6d6482cbee012a41cfc7c"
+      url: "https://pub.dev"
+    source: hosted
     version: "2.9.1"
   serverpod_chat_flutter:
     dependency: "direct main"
     description:
-      path: "../../../modules/serverpod_chat/serverpod_chat_flutter"
-      relative: true
-    source: path
+      name: serverpod_chat_flutter
+      sha256: "6c6fd2f12036b9b2c59321eccf947aad58c9d915c9cadf1a12883d1bcee0920d"
+      url: "https://pub.dev"
+    source: hosted
     version: "2.9.1"
   serverpod_client:
     dependency: "direct main"
     description:
-      path: "../../../packages/serverpod_client"
-      relative: true
-    source: path
+      name: serverpod_client
+      sha256: "04cb6d36730c8c24c067cde6e41551ad2dd7ae3725bbaa2756e82d2f5b345f54"
+      url: "https://pub.dev"
+    source: hosted
     version: "2.9.1"
   serverpod_flutter:
     dependency: "direct main"
     description:
-      path: "../../../packages/serverpod_flutter"
-      relative: true
-    source: path
+      name: serverpod_flutter
+      sha256: "1d9c2cb511581a7fdc1fc81ac5475ef75c0cf0a1c9181308e956db4818759bb7"
+      url: "https://pub.dev"
+    source: hosted
     version: "2.9.1"
   serverpod_serialization:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "../../../packages/serverpod_serialization"
-      relative: true
-    source: path
+      name: serverpod_serialization
+      sha256: c301a5e45610c062e51e1ba580f51f3257c3404ce2dd2f7e216dccbd93869502
+      url: "https://pub.dev"
+    source: hosted
     version: "2.9.1"
   shared_preferences:
     dependency: transitive
