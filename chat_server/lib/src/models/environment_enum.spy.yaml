@@ -1,0 +1,8 @@
+### Represents a chat channel.
+enum: EnvironmentEnum 
+serialized: byIndex 
+values:
+  ### The name of the channel.
+  - dev
+  - server1
+  - server2

@@ -1,3 +1,4 @@
+import 'package:chat_server/src/box/populate_database.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
 import 'package:serverpod_chat_server/serverpod_chat_server.dart' as chat;
@@ -23,6 +24,16 @@ void run(List<String> args) async {
   // the users to validate their email.
   auth.AuthConfig.set(auth.AuthConfig(
     minPasswordLength: 3,
+    onUserCreated: (session, userInfo) async {
+      session.log('Created user ${userInfo.userName}');
+
+      await UserOption.db.insertRow(
+        session,
+        UserOption(
+          userId: userInfo.id!,
+        ),
+      );
+    },
     sendValidationEmail: (session, email, validationCode) async {
       print('Validation code: $validationCode');
       session.log('Code for $email is $validationCode');
@@ -48,35 +59,5 @@ void run(List<String> args) async {
 
   // Create an initial set of entries in the database, if they do not exist
   // already.
-  await _populateDatabase(pod);
-}
-
-Future<void> _populateDatabase(Serverpod pod) async {
-  // Create a session so that we can access the database.
-  var session = await pod.createSession();
-
-  var numChannels = await Channel.db.count(session);
-  if (numChannels != 0) {
-    // There are already entries in the database, whe shouldn't add them again.
-    await session.close();
-    return;
-  }
-
-  // Insert an initial set of channels.
-  await Channel.db.insertRow(
-    session,
-    Channel(name: 'General', channel: 'general'),
-  );
-  await Channel.db.insertRow(
-    session,
-    Channel(name: 'Serverpod', channel: 'serverpod'),
-  );
-  await Channel.db.insertRow(
-    session,
-    Channel(name: 'Introductions', channel: 'intros'),
-  );
-
-  // Make sure to close the session when we are done, or it will hold up
-  // resources.
-  await session.close();
+  await populateDatabase(pod);
 }

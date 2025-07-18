@@ -19,6 +19,7 @@ abstract class Channel
     required this.name,
     required this.channel,
     this.deletedAt,
+    this.environmentId,
   });
 
   factory Channel({
@@ -26,6 +27,7 @@ abstract class Channel
     required String name,
     required String channel,
     DateTime? deletedAt,
+    int? environmentId,
   }) = _ChannelImpl;
 
   factory Channel.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -36,6 +38,7 @@ abstract class Channel
       deletedAt: jsonSerialization['deletedAt'] == null
           ? null
           : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['deletedAt']),
+      environmentId: jsonSerialization['environmentId'] as int?,
     );
   }
 
@@ -55,6 +58,9 @@ abstract class Channel
   /// soft delete
   DateTime? deletedAt;
 
+  /// The server id of the server who created the channel
+  int? environmentId;
+
   @override
   _i1.Table<int?> get table => t;
 
@@ -66,6 +72,7 @@ abstract class Channel
     String? name,
     String? channel,
     DateTime? deletedAt,
+    int? environmentId,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -74,6 +81,7 @@ abstract class Channel
       'name': name,
       'channel': channel,
       if (deletedAt != null) 'deletedAt': deletedAt?.toJson(),
+      if (environmentId != null) 'environmentId': environmentId,
     };
   }
 
@@ -125,11 +133,13 @@ class _ChannelImpl extends Channel {
     required String name,
     required String channel,
     DateTime? deletedAt,
+    int? environmentId,
   }) : super._(
           id: id,
           name: name,
           channel: channel,
           deletedAt: deletedAt,
+          environmentId: environmentId,
         );
 
   /// Returns a shallow copy of this [Channel]
@@ -141,12 +151,14 @@ class _ChannelImpl extends Channel {
     String? name,
     String? channel,
     Object? deletedAt = _Undefined,
+    Object? environmentId = _Undefined,
   }) {
     return Channel(
       id: id is int? ? id : this.id,
       name: name ?? this.name,
       channel: channel ?? this.channel,
       deletedAt: deletedAt is DateTime? ? deletedAt : this.deletedAt,
+      environmentId: environmentId is int? ? environmentId : this.environmentId,
     );
   }
 }
@@ -165,6 +177,10 @@ class ChannelTable extends _i1.Table<int?> {
       'deletedAt',
       this,
     );
+    environmentId = _i1.ColumnInt(
+      'environmentId',
+      this,
+    );
   }
 
   /// The name of the channel.
@@ -176,12 +192,16 @@ class ChannelTable extends _i1.Table<int?> {
   /// soft delete
   late final _i1.ColumnDateTime deletedAt;
 
+  /// The server id of the server who created the channel
+  late final _i1.ColumnInt environmentId;
+
   @override
   List<_i1.Column> get columns => [
         id,
         name,
         channel,
         deletedAt,
+        environmentId,
       ];
 }
 

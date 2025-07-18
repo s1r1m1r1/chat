@@ -1,10 +1,14 @@
-import 'package:chat_flutter/src/disconnected_page.dart';
-import 'package:chat_flutter/src/loading_page.dart';
+import 'package:chat_flutter/src/app/app_bloc_observer.dart';
+import 'package:chat_flutter/src/chat/view/cubit/list_channel_cubit.dart';
+import 'package:chat_flutter/src/chat/view/cubit/list_chat_controller_cubit.dart';
+import 'package:chat_flutter/src/connection/view/cubit/connection_cubit.dart';
+import 'package:chat_flutter/src/inject/inject.dart';
 import 'package:chat_flutter/src/main_page.dart';
-import 'package:flutter/material.dart';
+import 'package:chat_flutter/src/user/view/bloc/server_env_cubit.dart';
+import 'package:flutter/material.dart' hide ConnectionState;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serverpod_auth_email_flutter/serverpod_auth_email_flutter.dart';
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
-import 'package:serverpod_chat_flutter/serverpod_chat_flutter.dart';
 import 'package:chat_client/chat_client.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 
@@ -33,7 +37,8 @@ void main() async {
     caller: client.modules.auth,
   );
   await sessionManager.initialize();
-
+  configureDependencies();
+  Bloc.observer = AppBlocObserver();
   runApp(const MyApp());
 }
 
@@ -77,7 +82,63 @@ class _SignInPageState extends State<_SignInPage> {
   @override
   Widget build(BuildContext context) {
     if (sessionManager.isSignedIn) {
-      return const _ConnectionPage();
+      return MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            lazy: false,
+            create: (_) => getIt<ConnectionCubit>()..subscribe(),
+          ),
+          BlocProvider(
+            lazy: false,
+            create: (_) => getIt<ServerEnvCubit>()..init(),
+          ),
+          BlocProvider(
+            lazy: false,
+            create: (_) => getIt<ListChannelCubit>()..loadChannels(),
+          ),
+          BlocProvider(
+            lazy: false,
+            create: (_) => getIt<ListChatControllerCubit>()..load(),
+          ),
+        ],
+        child: BlocBuilder<ConnectionCubit, ConnectionState>(
+          builder: (context, connectionState) {
+            return BlocBuilder<ListChatControllerCubit,
+                ListChatControllerState>(
+              builder: (context, listChatControllerState) {
+                return BlocBuilder<ListChannelCubit, ListChannelState>(
+                  builder: (context, listChannelState) {
+                    switch (listChannelState) {
+                      case $InitialListChannel():
+                        return _loading(context, 'Init 1');
+                      case $LoadingListChannel():
+                        return _loading(context, 'L 1');
+                      case $LoadedListChannel():
+                        switch (listChatControllerState) {
+                          case $InitialListChatController():
+                            return _loading(context, "Init 2");
+                          case $LoadingListChatController():
+                            return _loading(context, "L 2");
+                          case $FailureListChatController():
+                            return _loading(context, "F 2");
+                          case $LoadedListChatController():
+                            if (listChatControllerState.result.isEmpty) {
+                              return Center(child: Text('empty'));
+                            }
+                            return MainPage(
+                              chatControllers: listChatControllerState.result,
+                            );
+                        }
+                      case $FailureListChannel():
+                        return _loading(context, "F 1");
+                    }
+                  },
+                );
+              },
+            );
+          },
+        ),
+      );
     } else {
       return Scaffold(
         body: Container(
@@ -93,6 +154,34 @@ class _SignInPageState extends State<_SignInPage> {
     }
   }
 
+  Widget _loading(
+    BuildContext ctx, [
+    String? message,
+  ]) {
+    return Material(
+      child: Center(
+          child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (message != null) Text(message),
+          CircularProgressIndicator(),
+          TextButton(
+              onPressed: () async {
+                // await ctx.read<ConnectionCubit>().subscribe();
+                if (!ctx.mounted) return;
+                await ctx.read<ServerEnvCubit>().init();
+                if (!ctx.mounted) return;
+                await ctx.read<ListChannelCubit>().loadChannels();
+                if (!ctx.mounted) return;
+                await ctx.read<ListChatControllerCubit>().load();
+                if (!ctx.mounted) return;
+              },
+              child: Text('Retry'))
+        ],
+      )),
+    );
+  }
+
   // This method is called whenever the user signs in or out.
   void _changedSessionStatus() {
     setState(() {});
@@ -102,153 +191,19 @@ class _SignInPageState extends State<_SignInPage> {
 // The _ConnectionPage can display three states; a loading spinner, a page
 // if loading fails or if the connection to the server is broken, or the
 // main chat page.
-class _ConnectionPage extends StatefulWidget {
-  const _ConnectionPage();
 
-  @override
-  _ConnectionPageState createState() => _ConnectionPageState();
-}
-
-class _ConnectionPageState extends State<_ConnectionPage> {
-  // List of channels as retrieved from the server. Null if the chats hasn't
-  // been successfully loaded.
-  List<Channel>? _channels;
-
-  // True if we are currently trying to connect to the server.
-  bool _connecting = false;
-
-  // Contains a list of ChatControllers.
-  final Map<String, ChatController> _chatControllers = {};
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Starts listening to changes in the websocket connection.
-    client.addStreamingConnectionStatusListener(_changedConnectionStatus);
-    _connect();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-
-    // Stops listening to websocket connections.
-    client.removeStreamingConnectionStatusListener(_changedConnectionStatus);
-    _disposeChatControllers();
-  }
-
-  // Disposes all chat controllers and removes the references to them.
-  void _disposeChatControllers() {
-    for (var chatController in _chatControllers.values) {
-      chatController.dispose();
-    }
-    _chatControllers.clear();
-  }
-
-  // Starts connecting to the server. Connection is complete when we have
-  // established a connection to the websocket and to all chat channels.
-  Future<void> _connect() async {
-    // Reset to initial state.
-    setState(() {
-      _channels = null;
-      _connecting = true;
-      _disposeChatControllers();
-    });
-
-    try {
-      // Load list of channels.
-      _channels = await client.channels.getChannels();
-
-      // Make sure that the web socket is connected.
-      await client.openStreamingConnection();
-
-      // Setup ChatControllers for all the channels in the list.
-      for (var channel in _channels!) {
-        var controller = ChatController(
-          channel: channel.channel,
-          module: client.modules.chat,
-          sessionManager: sessionManager,
-        );
-
-        _chatControllers[channel.channel] = controller;
-
-        // Listen to changes in the connection status of the chat channel.
-        controller.addConnectionStatusListener(_chatConnectionStatusChanged);
-      }
-    } catch (e) {
-      // We failed to connect.
-      setState(() {
-        _channels = null;
-        _connecting = false;
-      });
-      return;
-    }
-  }
-
-  // This method is called whenever the state for the web socket has changed.
-  void _changedConnectionStatus() {
-    setState(() {});
-  }
-
-  // This method is called whenever we have established a connection to a chat
-  // channel.
-  void _chatConnectionStatusChanged() {
-    // Make sure that we have received the list of channels.
-    if (_channels == null || _channels!.isEmpty) {
-      setState(() {
-        _channels = null;
-        _connecting = false;
-      });
-      return;
-    }
-
-    var numJoinedChannels = 0;
-
-    // Count the number of channels that we have joined.
-    for (var chatController in _chatControllers.values) {
-      if (chatController.joinedChannel) {
-        numJoinedChannels += 1;
-      } else if (chatController.joinFailed) {
-        setState(() {
-          _channels = null;
-          _connecting = false;
-        });
-        return;
-      }
-    }
-
-    // If we have joined all the channels loading is complete.
-    if (numJoinedChannels == _chatControllers.length) {
-      setState(() {
-        _connecting = false;
-      });
-    }
-  }
-
-  // Attempt to reconnect to the server.
-  void _reconnect() {
-    if (client.streamingConnectionStatus ==
-        StreamingConnectionStatus.disconnected) {
-      _connect();
-    }
-  }
+class RetryButton extends StatelessWidget {
+  const RetryButton({
+    Key? key,
+    required this.onPressed,
+  }) : super(key: key);
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
-    if (_connecting) {
-      return const LoadingPage();
-    } else if (_channels == null ||
-        client.streamingConnectionStatus ==
-            StreamingConnectionStatus.disconnected) {
-      return DisconnectedPage(
-        onReconnect: _reconnect,
-      );
-    } else {
-      return MainPage(
-        channels: _channels!,
-        chatControllers: _chatControllers,
-      );
-    }
+    return TextButton(
+      onPressed: () {},
+      child: Text('retry button'),
+    );
   }
 }

@@ -1,0 +1,51 @@
+{
+  "actions": [
+    {
+      "type": "alterTable",
+      "alterTable": {
+        "name": "user_option",
+        "schema": "public",
+        "addColumns": [
+          {
+            "name": "byIndexEnv",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "0",
+            "dartType": "protocol:EnvironmentEnum"
+          }
+        ],
+        "deleteColumns": [
+          "environmentId"
+        ],
+        "modifyColumns": [],
+        "addIndexes": [],
+        "deleteIndexes": [],
+        "addForeignKeys": [],
+        "deleteForeignKeys": [],
+        "warnings": [
+          {
+            "type": "columnDropped",
+            "message": "Column \"environmentId\" of table \"user_option\" will be dropped.",
+            "table": "user_option",
+            "columns": [
+              "environmentId"
+            ],
+            "destrucive": true
+          }
+        ]
+      }
+    }
+  ],
+  "warnings": [
+    {
+      "type": "columnDropped",
+      "message": "Column \"environmentId\" of table \"user_option\" will be dropped.",
+      "table": "user_option",
+      "columns": [
+        "environmentId"
+      ],
+      "destrucive": true
+    }
+  ],
+  "migrationApiVersion": 1
+}

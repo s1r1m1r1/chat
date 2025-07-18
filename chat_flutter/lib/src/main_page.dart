@@ -1,17 +1,14 @@
-import 'package:chat_client/chat_client.dart';
 import 'package:chat_flutter/main.dart';
 import 'package:chat_flutter/src/chat_page.dart';
+import 'package:chat_flutter/src/user/view/bloc/server_env_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serverpod_chat_flutter/serverpod_chat_flutter.dart';
 
-/// The MainPage contains a _ChatPage with the currently selected chat, and a
-/// drawer where the user can pick which chat to interact with.
 class MainPage extends StatefulWidget {
-  final List<Channel> channels;
-  final Map<String, ChatController> chatControllers;
+  final List<ChatController> chatControllers;
 
   const MainPage({
-    required this.channels,
     required this.chatControllers,
     super.key,
   });
@@ -21,34 +18,26 @@ class MainPage extends StatefulWidget {
 }
 
 class MainPageState extends State<MainPage> {
-  late String _selectedChannel;
+  ChatController? _selected;
 
   @override
   void initState() {
     super.initState();
 
-    _selectedChannel = widget.channels[0].channel;
+    _selected = widget.chatControllers.first;
   }
 
   @override
   Widget build(BuildContext context) {
     // Find current chat controller and channel information
-    var controller = widget.chatControllers[_selectedChannel];
-
-    Channel? channel;
-    for (var c in widget.channels) {
-      if (c.channel == _selectedChannel) {
-        channel = c;
-        break;
-      }
-    }
 
     return Scaffold(
+      backgroundColor: Colors.amber,
       appBar: AppBar(
-        title: Text(channel?.name ?? 'Serverpod Example'),
+        title: Text(_selected?.channel ?? "not selected"),
       ),
       drawer: _ChannelDrawer(
-        channels: widget.channels,
+        channelNames: widget.chatControllers.map((e) => e.channel).toList(),
         selectedChannel: _selectedChannel,
         onSelectChannel: (channel) {
           setState(() {
@@ -56,7 +45,7 @@ class MainPageState extends State<MainPage> {
           });
         },
       ),
-      body: controller != null
+      body: _selected != null
           ? ChatPage(
               key: ValueKey(controller.channel),
               controller: controller,
@@ -70,12 +59,12 @@ class MainPageState extends State<MainPage> {
 
 // The _ChannelDrawer displays a list of chat channels.
 class _ChannelDrawer extends StatelessWidget {
-  final List<Channel> channels;
+  final List<String> channelNames;
   final String selectedChannel;
   final ValueChanged<String> onSelectChannel;
 
   const _ChannelDrawer({
-    required this.channels,
+    required this.channelNames,
     required this.selectedChannel,
     required this.onSelectChannel,
   });
@@ -104,21 +93,45 @@ class _ChannelDrawer extends StatelessWidget {
             child:
                 Text('Channels', style: Theme.of(context).textTheme.bodySmall),
           ),
+          BlocBuilder<ServerEnvCubit, ServerEnvState>(
+            builder: (context, state) {
+              switch (state) {
+                case $ServerEnvStateInitial():
+                case $ServerEnvStateLoading():
+                  return const CircularProgressIndicator();
+                case $ServerEnvStateSuccess():
+                  return TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => NewChannelWidget(
+                                  onAddChannel: (name) => client.channels
+                                      .createChannel(
+                                          name: name,
+                                          channel: name,
+                                          environmentId: state.id),
+                                )));
+                      },
+                      child: const Text('New Channel'));
+                case $ServerEnvStateFailure():
+                  return const Text('Failed to load channels');
+              }
+            },
+          ),
           Expanded(
             child: ListView(
               padding: EdgeInsets.zero,
-              children: channels
+              children: channelNames
                   .map<ListTile>(
-                    (e) => ListTile(
+                    (name) => ListTile(
                       title: Text(
-                        e.name,
-                        style: e.channel == selectedChannel
+                        name,
+                        style: name == selectedChannel
                             ? const TextStyle(fontWeight: FontWeight.bold)
                             : null,
                       ),
                       onTap: () {
                         // Select the channel
-                        onSelectChannel(e.channel);
+                        onSelectChannel(name);
 
                         // Close the drawer
                         Navigator.of(context).pop();
@@ -135,5 +148,68 @@ class _ChannelDrawer extends StatelessWidget {
 
   void _signOut() {
     sessionManager.signOutDevice();
+  }
+}
+
+class NewChannelWidget extends StatefulWidget {
+  final void Function(String) onAddChannel;
+
+  const NewChannelWidget({
+    super.key,
+    required this.onAddChannel,
+  });
+
+  @override
+  State<NewChannelWidget> createState() => _NewChannelWidgetState();
+}
+
+class _NewChannelWidgetState extends State<NewChannelWidget> {
+  final _formKey = GlobalKey<FormState>();
+  final _channelController = TextEditingController();
+
+  @override
+  void dispose() {
+    _channelController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        child: Form(
+          key: _formKey,
+          child: Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _channelController,
+                  decoration: const InputDecoration(
+                    labelText: 'Channel',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a channel name';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              OutlinedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    widget.onAddChannel(_channelController.text);
+                    _channelController.clear();
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: const Text('Add Channel'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
