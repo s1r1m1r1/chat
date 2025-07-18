@@ -1,0 +1,5 @@
+admin:
+  - createChannel:
+  - deleteChannel:
+channels:
+  - getChannels:
