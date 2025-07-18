@@ -10,8 +10,6 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:chat_flutter/src/chat/domain/chat_repository.dart' as _i513;
-import 'package:chat_flutter/src/chat/view/cubit/list_channel_cubit.dart'
-    as _i824;
 import 'package:chat_flutter/src/chat/view/cubit/list_chat_controller_cubit.dart'
     as _i320;
 import 'package:chat_flutter/src/connection/domain/connection_repository.dart'
@@ -47,8 +45,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i189.ServerEnvCubit>(
         () => _i189.ServerEnvCubit(gh<_i470.UserRepository>()));
-    gh.factory<_i824.ListChannelCubit>(
-        () => _i824.ListChannelCubit(gh<_i513.ChatRepository>()));
     gh.factory<_i320.ListChatControllerCubit>(
         () => _i320.ListChatControllerCubit(gh<_i513.ChatRepository>()));
     return this;

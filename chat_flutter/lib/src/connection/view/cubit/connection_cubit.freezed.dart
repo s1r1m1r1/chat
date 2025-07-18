@@ -15,18 +15,34 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$ConnectionState {
+  InternetStatus get internetStatus;
+  ServerStatus get serverStatus;
+
+  /// Create a copy of ConnectionState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $ConnectionStateCopyWith<ConnectionState> get copyWith =>
+      _$ConnectionStateCopyWithImpl<ConnectionState>(
+          this as ConnectionState, _$identity);
+
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is ConnectionState);
+        (other.runtimeType == runtimeType &&
+            other is ConnectionState &&
+            (identical(other.internetStatus, internetStatus) ||
+                other.internetStatus == internetStatus) &&
+            (identical(other.serverStatus, serverStatus) ||
+                other.serverStatus == serverStatus));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, internetStatus, serverStatus);
 
   @override
   String toString() {
-    return 'ConnectionState()';
+    return 'ConnectionState(internetStatus: $internetStatus, serverStatus: $serverStatus)';
   }
 }
 
@@ -35,6 +51,8 @@ abstract mixin class $ConnectionStateCopyWith<$Res> {
   factory $ConnectionStateCopyWith(
           ConnectionState value, $Res Function(ConnectionState) _then) =
       _$ConnectionStateCopyWithImpl;
+  @useResult
+  $Res call({InternetStatus internetStatus, ServerStatus serverStatus});
 }
 
 /// @nodoc
@@ -47,62 +65,60 @@ class _$ConnectionStateCopyWithImpl<$Res>
 
   /// Create a copy of ConnectionState
   /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class $InitialState extends ConnectionState {
-  const $InitialState() : super._();
-
+  @pragma('vm:prefer-inline')
   @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is $InitialState);
+  $Res call({
+    Object? internetStatus = null,
+    Object? serverStatus = null,
+  }) {
+    return _then(_self.copyWith(
+      internetStatus: null == internetStatus
+          ? _self.internetStatus
+          : internetStatus // ignore: cast_nullable_to_non_nullable
+              as InternetStatus,
+      serverStatus: null == serverStatus
+          ? _self.serverStatus
+          : serverStatus // ignore: cast_nullable_to_non_nullable
+              as ServerStatus,
+    ));
   }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  String toString() {
-    return 'ConnectionState.initial()';
-  }
-}
-
-/// @nodoc
-abstract mixin class $$InitialStateCopyWith<$Res>
-    implements $ConnectionStateCopyWith<$Res> {
-  factory $$InitialStateCopyWith(
-          $InitialState value, $Res Function($InitialState) _then) =
-      _$$InitialStateCopyWithImpl;
-}
-
-/// @nodoc
-class _$$InitialStateCopyWithImpl<$Res>
-    implements $$InitialStateCopyWith<$Res> {
-  _$$InitialStateCopyWithImpl(this._self, this._then);
-
-  final $InitialState _self;
-  final $Res Function($InitialState) _then;
 }
 
 /// @nodoc
 
 class $ConnectingState extends ConnectionState {
-  const $ConnectingState() : super._();
+  const $ConnectingState(this.internetStatus, this.serverStatus) : super._();
+
+  @override
+  final InternetStatus internetStatus;
+  @override
+  final ServerStatus serverStatus;
+
+  /// Create a copy of ConnectionState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $$ConnectingStateCopyWith<$ConnectingState> get copyWith =>
+      _$$ConnectingStateCopyWithImpl<$ConnectingState>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is $ConnectingState);
+        (other.runtimeType == runtimeType &&
+            other is $ConnectingState &&
+            (identical(other.internetStatus, internetStatus) ||
+                other.internetStatus == internetStatus) &&
+            (identical(other.serverStatus, serverStatus) ||
+                other.serverStatus == serverStatus));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, internetStatus, serverStatus);
 
   @override
   String toString() {
-    return 'ConnectionState.connecting()';
+    return 'ConnectionState(internetStatus: $internetStatus, serverStatus: $serverStatus)';
   }
 }
 
@@ -112,6 +128,9 @@ abstract mixin class $$ConnectingStateCopyWith<$Res>
   factory $$ConnectingStateCopyWith(
           $ConnectingState value, $Res Function($ConnectingState) _then) =
       _$$ConnectingStateCopyWithImpl;
+  @override
+  @useResult
+  $Res call({InternetStatus internetStatus, ServerStatus serverStatus});
 }
 
 /// @nodoc
@@ -121,80 +140,26 @@ class _$$ConnectingStateCopyWithImpl<$Res>
 
   final $ConnectingState _self;
   final $Res Function($ConnectingState) _then;
-}
 
-/// @nodoc
-
-class $ConnectedState extends ConnectionState {
-  const $ConnectedState() : super._();
-
+  /// Create a copy of ConnectionState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is $ConnectedState);
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? internetStatus = null,
+    Object? serverStatus = null,
+  }) {
+    return _then($ConnectingState(
+      null == internetStatus
+          ? _self.internetStatus
+          : internetStatus // ignore: cast_nullable_to_non_nullable
+              as InternetStatus,
+      null == serverStatus
+          ? _self.serverStatus
+          : serverStatus // ignore: cast_nullable_to_non_nullable
+              as ServerStatus,
+    ));
   }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  String toString() {
-    return 'ConnectionState.connected()';
-  }
-}
-
-/// @nodoc
-abstract mixin class $$ConnectedStateCopyWith<$Res>
-    implements $ConnectionStateCopyWith<$Res> {
-  factory $$ConnectedStateCopyWith(
-          $ConnectedState value, $Res Function($ConnectedState) _then) =
-      _$$ConnectedStateCopyWithImpl;
-}
-
-/// @nodoc
-class _$$ConnectedStateCopyWithImpl<$Res>
-    implements $$ConnectedStateCopyWith<$Res> {
-  _$$ConnectedStateCopyWithImpl(this._self, this._then);
-
-  final $ConnectedState _self;
-  final $Res Function($ConnectedState) _then;
-}
-
-/// @nodoc
-
-class $DisconnectedState extends ConnectionState {
-  const $DisconnectedState() : super._();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is $DisconnectedState);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  String toString() {
-    return 'ConnectionState.disconnected()';
-  }
-}
-
-/// @nodoc
-abstract mixin class $$DisconnectedStateCopyWith<$Res>
-    implements $ConnectionStateCopyWith<$Res> {
-  factory $$DisconnectedStateCopyWith(
-          $DisconnectedState value, $Res Function($DisconnectedState) _then) =
-      _$$DisconnectedStateCopyWithImpl;
-}
-
-/// @nodoc
-class _$$DisconnectedStateCopyWithImpl<$Res>
-    implements $$DisconnectedStateCopyWith<$Res> {
-  _$$DisconnectedStateCopyWithImpl(this._self, this._then);
-
-  final $DisconnectedState _self;
-  final $Res Function($DisconnectedState) _then;
 }
 
 // dart format on

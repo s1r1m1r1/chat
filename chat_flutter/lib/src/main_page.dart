@@ -37,18 +37,18 @@ class MainPageState extends State<MainPage> {
         title: Text(_selected?.channel ?? "not selected"),
       ),
       drawer: _ChannelDrawer(
-        channelNames: widget.chatControllers.map((e) => e.channel).toList(),
-        selectedChannel: _selectedChannel,
-        onSelectChannel: (channel) {
+        controllers: widget.chatControllers,
+        selected: _selected,
+        onSelected: (value) {
           setState(() {
-            _selectedChannel = channel;
+            _selected = value;
           });
         },
       ),
       body: _selected != null
           ? ChatPage(
-              key: ValueKey(controller.channel),
-              controller: controller,
+              key: ValueKey(_selected?.channel),
+              controller: _selected!,
             )
           : const Center(
               child: Text('Select a channel.'),
@@ -59,14 +59,14 @@ class MainPageState extends State<MainPage> {
 
 // The _ChannelDrawer displays a list of chat channels.
 class _ChannelDrawer extends StatelessWidget {
-  final List<String> channelNames;
-  final String selectedChannel;
-  final ValueChanged<String> onSelectChannel;
+  final List<ChatController> controllers;
+  final ChatController? selected;
+  final ValueSetter<ChatController?> onSelected;
 
   const _ChannelDrawer({
-    required this.channelNames,
-    required this.selectedChannel,
-    required this.onSelectChannel,
+    required this.controllers,
+    required this.selected,
+    required this.onSelected,
   });
 
   @override
@@ -120,18 +120,17 @@ class _ChannelDrawer extends StatelessWidget {
           Expanded(
             child: ListView(
               padding: EdgeInsets.zero,
-              children: channelNames
+              children: controllers
                   .map<ListTile>(
-                    (name) => ListTile(
+                    (c) => ListTile(
                       title: Text(
-                        name,
-                        style: name == selectedChannel
+                        c.channel,
+                        style: c.channel == selected?.channel
                             ? const TextStyle(fontWeight: FontWeight.bold)
                             : null,
                       ),
                       onTap: () {
-                        // Select the channel
-                        onSelectChannel(name);
+                        onSelected(c); // Select the channel
 
                         // Close the drawer
                         Navigator.of(context).pop();

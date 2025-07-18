@@ -8,8 +8,7 @@ import 'package:serverpod_chat_flutter/serverpod_chat_flutter.dart';
 import '../../../main.dart';
 
 abstract class ChatRepository {
-  Future<List<Channel>> getChannels();
-  Future<Map<String, ChatController>> getControllers();
+  Future<List<ChatController>> getControllers();
   void dispose();
 }
 
@@ -18,31 +17,7 @@ class ChatRepositoryImpl implements ChatRepository {
   final UserRepository _userRepository;
   ChatRepositoryImpl(this._userRepository);
   List<Channel>? _channels;
-  final Map<String, ChatController> _chatControllers = {};
-  var numJoinedChannels = 0;
-
-  @override
-  Future<List<Channel>> getChannels() async {
-    if (_channels != null && _channels!.isNotEmpty) {
-      return _channels!;
-    }
-
-    final envId = await _userRepository.getEnvId();
-    _channels = await client.channels.getChannels(environmentId: envId);
-    // Setup ChatControllers for all the channels in the list.
-    for (var channel in _channels!) {
-      var controller = ChatController(
-        channel: channel.channel,
-        module: client.modules.chat,
-        sessionManager: sessionManager,
-      );
-
-      _chatControllers[channel.channel] = controller;
-
-      // Listen to changes in the connection status of the chat channel.
-    }
-    return _channels!;
-  }
+  final List<ChatController> _chatControllers = [];
 
 //-----------------------------------------------------------------------------
   @override
@@ -52,16 +27,29 @@ class ChatRepositoryImpl implements ChatRepository {
     _channels = null;
   }
 
-  // Disposes all chat controllers and removes the references to them.
+// Disposes all chat controllers and removes the references to them.
   void _disposeChatControllers() {
-    for (var chatController in _chatControllers.values) {
+    for (var chatController in _chatControllers) {
       chatController.dispose();
     }
   }
 
   @override
-  Future<Map<String, ChatController>> getControllers() async {
-    await getChannels();
-    return _chatControllers;
+  Future<List<ChatController>> getControllers() async {
+    _channels = await _getChannels();
+    for (var channel in _channels!) {
+      var controller = ChatController(
+        channel: channel.channel,
+        module: client.modules.chat,
+        sessionManager: sessionManager,
+      );
+      _chatControllers.add(controller);
+    }
+    return List.of(_chatControllers);
+  }
+
+  Future<List<Channel>> _getChannels() async {
+    final envId = await _userRepository.getEnvId();
+    return client.channels.getChannels(environmentId: envId);
   }
 }

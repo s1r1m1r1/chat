@@ -75,15 +75,15 @@ class $LoadingListChatController extends ListChatControllerState {
 /// @nodoc
 
 class $LoadedListChatController extends ListChatControllerState {
-  const $LoadedListChatController(final Map<String, ChatController> result)
+  const $LoadedListChatController(final List<ChatController> result)
       : _result = result,
         super._();
 
-  final Map<String, ChatController> _result;
-  Map<String, ChatController> get result {
-    if (_result is EqualUnmodifiableMapView) return _result;
+  final List<ChatController> _result;
+  List<ChatController> get result {
+    if (_result is EqualUnmodifiableListView) return _result;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(_result);
+    return EqualUnmodifiableListView(_result);
   }
 
   /// Create a copy of ListChatControllerState
@@ -118,7 +118,7 @@ abstract mixin class $$LoadedListChatControllerCopyWith<$Res> {
           $Res Function($LoadedListChatController) _then) =
       _$$LoadedListChatControllerCopyWithImpl;
   @useResult
-  $Res call({Map<String, ChatController> result});
+  $Res call({List<ChatController> result});
 }
 
 /// @nodoc
@@ -139,7 +139,7 @@ class _$$LoadedListChatControllerCopyWithImpl<$Res>
       null == result
           ? _self.result
           : result // ignore: cast_nullable_to_non_nullable
-              as Map<String, ChatController>,
+              as List<ChatController>,
     ));
   }
 }

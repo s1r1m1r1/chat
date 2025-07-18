@@ -17,7 +17,6 @@ class ListChatControllerCubit extends Cubit<ListChatControllerState> {
       final result = await _chatRepository.getControllers();
       emit(ListChatControllerState.loaded(result));
     } catch (e) {
-      print(e);
       addError(e);
       emit(ListChatControllerState.failure());
     }
@@ -30,7 +29,7 @@ sealed class ListChatControllerState with _$ListChatControllerState {
 
   const factory ListChatControllerState.initial() = $InitialListChatController;
   const factory ListChatControllerState.loading() = $LoadingListChatController;
-  const factory ListChatControllerState.loaded(
-      Map<String, ChatController> result) = $LoadedListChatController;
+  const factory ListChatControllerState.loaded(List<ChatController> result) =
+      $LoadedListChatController;
   const factory ListChatControllerState.failure() = $FailureListChatController;
 }

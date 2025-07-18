@@ -11,7 +11,7 @@ import '../../../main.dart';
 abstract class ConnectionRepository {
   Stream<InternetStatus> get internetStatus;
   Stream<ServerStatus> get serverStatus;
-
+  void init();
   Future<void> dispose();
 }
 
@@ -24,6 +24,7 @@ class ConnectionRepositoryImpl extends ConnectionRepository {
   final _serverStatusSbj =
       BehaviorSubject<ServerStatus>.seeded(ServerStatus.disconnected);
 
+  @override
   void init() {
     client.addStreamingConnectionStatusListener(_changedConnectionStatus);
     connect();

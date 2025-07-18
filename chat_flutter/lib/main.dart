@@ -1,5 +1,4 @@
 import 'package:chat_flutter/src/app/app_bloc_observer.dart';
-import 'package:chat_flutter/src/chat/view/cubit/list_channel_cubit.dart';
 import 'package:chat_flutter/src/chat/view/cubit/list_chat_controller_cubit.dart';
 import 'package:chat_flutter/src/connection/view/cubit/connection_cubit.dart';
 import 'package:chat_flutter/src/inject/inject.dart';
@@ -11,6 +10,10 @@ import 'package:serverpod_auth_email_flutter/serverpod_auth_email_flutter.dart';
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 import 'package:chat_client/chat_client.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
+import 'package:talker_bloc_logger/talker_bloc_logger_settings.dart';
+
+import 'src/app/app_material.dart';
+import 'src/connection/domain/connection_repository.dart';
 
 late SessionManager sessionManager;
 late Client client;
@@ -38,35 +41,36 @@ void main() async {
   );
   await sessionManager.initialize();
   configureDependencies();
-  Bloc.observer = AppBlocObserver();
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Serverpod Example',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const _SignInPage(),
-    );
-  }
+  Bloc.observer = MyTalkerBlocObserver(
+    settings: TalkerBlocLoggerSettings(
+      enabled: true,
+      printEventFullData: false,
+      printStateFullData: false,
+      printChanges: true,
+      printClosings: true,
+      printCreations: true,
+      printEvents: true,
+      printTransitions: true,
+      // If you want log only AuthBloc transitions
+      transitionFilter: (bloc, transition) =>
+          bloc.runtimeType.toString() == 'AuthBloc',
+      // If you want log only AuthBloc events
+      eventFilter: (bloc, event) => bloc.runtimeType.toString() == 'AuthBloc',
+    ),
+  );
+  runApp(const App());
 }
 
 // The _SignInPage either displays a dialog for signing in or, if the user is
 // signed in, displays the _ConnectionPage.
-class _SignInPage extends StatefulWidget {
-  const _SignInPage();
+class SignInPage extends StatefulWidget {
+  const SignInPage();
 
   @override
   _SignInPageState createState() => _SignInPageState();
 }
 
-class _SignInPageState extends State<_SignInPage> {
+class _SignInPageState extends State<SignInPage> {
   @override
   void initState() {
     super.initState();
@@ -94,49 +98,52 @@ class _SignInPageState extends State<_SignInPage> {
           ),
           BlocProvider(
             lazy: false,
-            create: (_) => getIt<ListChannelCubit>()..loadChannels(),
-          ),
-          BlocProvider(
-            lazy: false,
             create: (_) => getIt<ListChatControllerCubit>()..load(),
           ),
         ],
-        child: BlocBuilder<ConnectionCubit, ConnectionState>(
-          builder: (context, connectionState) {
-            return BlocBuilder<ListChatControllerCubit,
-                ListChatControllerState>(
-              builder: (context, listChatControllerState) {
-                return BlocBuilder<ListChannelCubit, ListChannelState>(
-                  builder: (context, listChannelState) {
-                    switch (listChannelState) {
-                      case $InitialListChannel():
-                        return _loading(context, 'Init 1');
-                      case $LoadingListChannel():
-                        return _loading(context, 'L 1');
-                      case $LoadedListChannel():
-                        switch (listChatControllerState) {
-                          case $InitialListChatController():
-                            return _loading(context, "Init 2");
-                          case $LoadingListChatController():
-                            return _loading(context, "L 2");
-                          case $FailureListChatController():
-                            return _loading(context, "F 2");
-                          case $LoadedListChatController():
-                            if (listChatControllerState.result.isEmpty) {
-                              return Center(child: Text('empty'));
-                            }
-                            return MainPage(
-                              chatControllers: listChatControllerState.result,
-                            );
-                        }
-                      case $FailureListChannel():
-                        return _loading(context, "F 1");
-                    }
-                  },
-                );
-              },
-            );
+        child: BlocListener<ConnectionCubit, ConnectionState>(
+          listener: (context, connectionState) async {
+            final message = switch ((
+              connectionState.internetStatus,
+              connectionState.serverStatus
+            )) {
+              (InternetStatus.available, ServerStatus.connecting) =>
+                'connecting...',
+              (InternetStatus.available, ServerStatus.disconnected) =>
+                'disconnected',
+              (InternetStatus.available, ServerStatus.waitingToRetry) =>
+                'waiting to retry',
+              (InternetStatus.available, ServerStatus.connecting) =>
+                'connecting...',
+              InternetStatus.noInternet => 'no internet',
+              (_, _) => throw UnimplementedError(),
+            };
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(content: Text(message)),
+              );
           },
+          child: BlocBuilder<ListChatControllerCubit, ListChatControllerState>(
+            builder: (context, listChatControllerState) {
+              return Builder(
+                builder: (context) {
+                  switch (listChatControllerState) {
+                    case $InitialListChatController():
+                      return _loading(context, "Init 2");
+                    case $LoadingListChatController():
+                      return _loading(context, "L 2");
+                    case $FailureListChatController():
+                      return _loading(context, "F 2");
+                    case $LoadedListChatController():
+                      return MainPage(
+                        chatControllers: listChatControllerState.result,
+                      );
+                  }
+                },
+              );
+            },
+          ),
         ),
       );
     } else {
@@ -170,8 +177,6 @@ class _SignInPageState extends State<_SignInPage> {
                 // await ctx.read<ConnectionCubit>().subscribe();
                 if (!ctx.mounted) return;
                 await ctx.read<ServerEnvCubit>().init();
-                if (!ctx.mounted) return;
-                await ctx.read<ListChannelCubit>().loadChannels();
                 if (!ctx.mounted) return;
                 await ctx.read<ListChatControllerCubit>().load();
                 if (!ctx.mounted) return;
