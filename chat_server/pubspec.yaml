@@ -15,14 +15,3 @@ dependencies:
 dev_dependencies:
   lints: '>=3.0.0 <7.0.0'
 
-dependency_overrides:
-  serverpod:
-    path: ../../../packages/serverpod
-  serverpod_auth_server:
-    path: ../../../modules/serverpod_auth/serverpod_auth_server
-  serverpod_chat_server:
-    path: ../../../modules/serverpod_chat/serverpod_chat_server
-  serverpod_serialization:
-    path: ../../../packages/serverpod_serialization
-  serverpod_shared:
-    path: ../../../packages/serverpod_shared
