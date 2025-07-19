@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../auth/view/page/sign_in_page.dart';
 import '../connection/view/bloc/connection_bloc.dart';
+import '../connection/view/widget/retry_connection_dialog.dart';
 import '../inject/inject.dart';
 import '../l10n/app_localizations.dart';
 
@@ -45,33 +46,11 @@ class _AppView extends StatelessWidget {
           ),
           builder: (context, child) {
             // overlay
-            if (state.serverStatus != ServerStatus.disconnected) {
+            if (state.serverStatus == ServerStatus.waitingToRetry) {
               return Stack(
                 children: [
                   child!,
-                  Container(color: Colors.black45),
-                  Center(
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(12, 30, 12, 30),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(AppLocalizations.of(context)!.connectionStatusWaitingToRetry,
-                                style: const TextStyle(fontWeight: FontWeight.bold)),
-                            SizedBox(height: 32),
-                            TextButton.icon(
-                              onPressed: () {
-                                context.read<ConnectionBloc>().add(ConnectionEvent.retryConnection());
-                              },
-                              label: Text('Retry'),
-                              icon: Icon(Icons.wifi_tethering),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  RetryConnectionDialog(),
                 ],
               );
             }
