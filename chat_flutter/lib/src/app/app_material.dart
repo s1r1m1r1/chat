@@ -13,21 +13,20 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Serverpod Example',
       localizationsDelegates: const [
         AppLocalizations.delegate, // Your app's localization delegate
         GlobalMaterialLocalizations.delegate, // Material widgets localizations
         GlobalWidgetsLocalizations.delegate, // Basic widgets localizations
-        GlobalCupertinoLocalizations
-            .delegate, // Cupertino widgets localizations
+        GlobalCupertinoLocalizations.delegate, // Cupertino widgets localizations
       ],
       // Cupertino widgets localizations
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: BlocProvider(
-        create: (_) =>
-            getIt<ConnectionBloc>()..add(ConnectionEvent.subscribe()),
+        create: (_) => getIt<ConnectionBloc>()..add(ConnectionEvent.subscribe()),
         child: const SignInPage(),
       ),
     );

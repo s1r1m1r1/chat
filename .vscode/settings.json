@@ -17,4 +17,5 @@
         ".git",
         "g.dart"
     ],
+    "dart.lineLength": 120
 }

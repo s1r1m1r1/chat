@@ -5,7 +5,6 @@ import 'package:serverpod_chat_server/serverpod_chat_server.dart' as chat;
 
 import 'src/generated/protocol.dart';
 import 'src/generated/endpoints.dart';
-
 // This is the starting point of your Serverpod server. In most cases, you will
 // only need to make additions to this file if you add future calls,  are
 // configuring Relic (Serverpod's web-server), or need custom setup work.
