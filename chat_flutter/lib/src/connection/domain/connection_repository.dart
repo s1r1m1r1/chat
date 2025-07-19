@@ -30,10 +30,8 @@ class ConnectionRepositoryImpl extends ConnectionRepository {
   }
 
   final _connectivity = Connectivity();
-  final _serverStatusSbj =
-      BehaviorSubject<ServerStatus>.seeded(ServerStatus.disconnected);
-  final _internetStatusSbj =
-      BehaviorSubject<InternetStatus>.seeded(InternetStatus.noInternet);
+  final _serverStatusSbj = BehaviorSubject<ServerStatus>.seeded(ServerStatus.disconnected);
+  final _internetStatusSbj = BehaviorSubject<InternetStatus>.seeded(InternetStatus.noInternet);
 
   StreamSubscription? _connectivitySubscription;
 
@@ -62,14 +60,12 @@ class ConnectionRepositoryImpl extends ConnectionRepository {
         break;
     }
     _serverStatusSbj.add(newStatus);
-    debugPrint(
-        'ConnectionRepository: Client streaming status changed to: $newStatus');
+    debugPrint('ConnectionRepository: Client streaming status changed to: $newStatus');
   }
 
   @override
   Future<void> openStreamingConnection() async {
-    if (client.streamingConnectionStatus ==
-        StreamingConnectionStatus.disconnected) {
+    if (client.streamingConnectionStatus == StreamingConnectionStatus.disconnected) {
       await client.openStreamingConnection();
     }
   }
@@ -96,9 +92,8 @@ class ConnectionRepositoryImpl extends ConnectionRepository {
   void _listenInternetStatus() async {
     final conResult = await _connectivity.checkConnectivity();
     _internetStatusSbj.value = InternetStatus.fromConnectivityResult(conResult);
-    _connectivitySubscription = _connectivity.onConnectivityChanged
-        .map(InternetStatus.fromConnectivityResult)
-        .listen(_internetStatusSbj.add);
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.map(InternetStatus.fromConnectivityResult).listen(_internetStatusSbj.add);
   }
 
   @override
@@ -110,8 +105,7 @@ class ConnectionRepositoryImpl extends ConnectionRepository {
     _connectivitySubscription?.cancel();
     // Ensure client resources are properly released
     client.removeStreamingConnectionStatusListener(_changedConnectionStatus);
-    await client
-        .closeStreamingConnection(); // Ensure client is closed on dispose
+    await client.closeStreamingConnection(); // Ensure client is closed on dispose
   }
 
   @override
@@ -122,8 +116,7 @@ enum InternetStatus {
   available,
   noInternet;
 
-  static InternetStatus fromConnectivityResult(
-      List<ConnectivityResult> connectivityResult) {
+  static InternetStatus fromConnectivityResult(List<ConnectivityResult> connectivityResult) {
     if (connectivityResult.contains(ConnectivityResult.mobile) ||
         connectivityResult.contains(ConnectivityResult.wifi) ||
         connectivityResult.contains(ConnectivityResult.ethernet)) {
@@ -138,5 +131,4 @@ enum ServerStatus {
   waitingToRetry,
   disconnected,
   connected,
-  failed
 }

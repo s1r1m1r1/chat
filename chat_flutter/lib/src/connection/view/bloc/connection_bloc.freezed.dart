@@ -32,8 +32,8 @@ mixin _$ConnectionEvent {
 
 /// @nodoc
 
-class _Subscribe implements ConnectionEvent {
-  const _Subscribe();
+class _Subscribe extends ConnectionEvent {
+  const _Subscribe() : super._();
 
   @override
   bool operator ==(Object other) {
@@ -52,18 +52,10 @@ class _Subscribe implements ConnectionEvent {
 
 /// @nodoc
 
-class _InternetStatusChanged implements ConnectionEvent {
-  const _InternetStatusChanged(this.status);
+class _InternetStatusChanged extends ConnectionEvent {
+  const _InternetStatusChanged(this.status) : super._();
 
   final InternetStatus status;
-
-  /// Create a copy of ConnectionEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$InternetStatusChangedCopyWith<_InternetStatusChanged> get copyWith =>
-      __$InternetStatusChangedCopyWithImpl<_InternetStatusChanged>(
-          this, _$identity);
 
   @override
   bool operator ==(Object other) {
@@ -83,51 +75,11 @@ class _InternetStatusChanged implements ConnectionEvent {
 }
 
 /// @nodoc
-abstract mixin class _$InternetStatusChangedCopyWith<$Res> {
-  factory _$InternetStatusChangedCopyWith(_InternetStatusChanged value,
-          $Res Function(_InternetStatusChanged) _then) =
-      __$InternetStatusChangedCopyWithImpl;
-  @useResult
-  $Res call({InternetStatus status});
-}
 
-/// @nodoc
-class __$InternetStatusChangedCopyWithImpl<$Res>
-    implements _$InternetStatusChangedCopyWith<$Res> {
-  __$InternetStatusChangedCopyWithImpl(this._self, this._then);
-
-  final _InternetStatusChanged _self;
-  final $Res Function(_InternetStatusChanged) _then;
-
-  /// Create a copy of ConnectionEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? status = null,
-  }) {
-    return _then(_InternetStatusChanged(
-      null == status
-          ? _self.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as InternetStatus,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _ServerStatusChanged implements ConnectionEvent {
-  const _ServerStatusChanged(this.status);
+class _ServerStatusChanged extends ConnectionEvent {
+  const _ServerStatusChanged(this.status) : super._();
 
   final ServerStatus status;
-
-  /// Create a copy of ConnectionEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$ServerStatusChangedCopyWith<_ServerStatusChanged> get copyWith =>
-      __$ServerStatusChangedCopyWithImpl<_ServerStatusChanged>(
-          this, _$identity);
 
   @override
   bool operator ==(Object other) {
@@ -147,41 +99,9 @@ class _ServerStatusChanged implements ConnectionEvent {
 }
 
 /// @nodoc
-abstract mixin class _$ServerStatusChangedCopyWith<$Res> {
-  factory _$ServerStatusChangedCopyWith(_ServerStatusChanged value,
-          $Res Function(_ServerStatusChanged) _then) =
-      __$ServerStatusChangedCopyWithImpl;
-  @useResult
-  $Res call({ServerStatus status});
-}
 
-/// @nodoc
-class __$ServerStatusChangedCopyWithImpl<$Res>
-    implements _$ServerStatusChangedCopyWith<$Res> {
-  __$ServerStatusChangedCopyWithImpl(this._self, this._then);
-
-  final _ServerStatusChanged _self;
-  final $Res Function(_ServerStatusChanged) _then;
-
-  /// Create a copy of ConnectionEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? status = null,
-  }) {
-    return _then(_ServerStatusChanged(
-      null == status
-          ? _self.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as ServerStatus,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _RetryConnection implements ConnectionEvent {
-  const _RetryConnection();
+class _RetryConnection extends ConnectionEvent {
+  const _RetryConnection() : super._();
 
   @override
   bool operator ==(Object other) {
@@ -200,8 +120,8 @@ class _RetryConnection implements ConnectionEvent {
 
 /// @nodoc
 
-class _Reconnect implements ConnectionEvent {
-  const _Reconnect();
+class _Reconnect extends ConnectionEvent {
+  const _Reconnect() : super._();
 
   @override
   bool operator ==(Object other) {
@@ -223,7 +143,7 @@ mixin _$ConnectionState {
   InternetStatus get internetStatus;
   ServerStatus get serverStatus;
   bool get isReconnecting;
-  Duration? get nextRetryDelay;
+  int get reconnectAttempt;
 
   /// Create a copy of ConnectionState
   /// with the given fields replaced by the non-null parameter values.
@@ -244,17 +164,17 @@ mixin _$ConnectionState {
                 other.serverStatus == serverStatus) &&
             (identical(other.isReconnecting, isReconnecting) ||
                 other.isReconnecting == isReconnecting) &&
-            (identical(other.nextRetryDelay, nextRetryDelay) ||
-                other.nextRetryDelay == nextRetryDelay));
+            (identical(other.reconnectAttempt, reconnectAttempt) ||
+                other.reconnectAttempt == reconnectAttempt));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, internetStatus, serverStatus,
-      isReconnecting, nextRetryDelay);
+      isReconnecting, reconnectAttempt);
 
   @override
   String toString() {
-    return 'ConnectionState(internetStatus: $internetStatus, serverStatus: $serverStatus, isReconnecting: $isReconnecting, nextRetryDelay: $nextRetryDelay)';
+    return 'ConnectionState(internetStatus: $internetStatus, serverStatus: $serverStatus, isReconnecting: $isReconnecting, reconnectAttempt: $reconnectAttempt)';
   }
 }
 
@@ -268,7 +188,7 @@ abstract mixin class $ConnectionStateCopyWith<$Res> {
       {InternetStatus internetStatus,
       ServerStatus serverStatus,
       bool isReconnecting,
-      Duration? nextRetryDelay});
+      int reconnectAttempt});
 }
 
 /// @nodoc
@@ -287,7 +207,7 @@ class _$ConnectionStateCopyWithImpl<$Res>
     Object? internetStatus = null,
     Object? serverStatus = null,
     Object? isReconnecting = null,
-    Object? nextRetryDelay = freezed,
+    Object? reconnectAttempt = null,
   }) {
     return _then(_self.copyWith(
       internetStatus: null == internetStatus
@@ -302,10 +222,10 @@ class _$ConnectionStateCopyWithImpl<$Res>
           ? _self.isReconnecting
           : isReconnecting // ignore: cast_nullable_to_non_nullable
               as bool,
-      nextRetryDelay: freezed == nextRetryDelay
-          ? _self.nextRetryDelay
-          : nextRetryDelay // ignore: cast_nullable_to_non_nullable
-              as Duration?,
+      reconnectAttempt: null == reconnectAttempt
+          ? _self.reconnectAttempt
+          : reconnectAttempt // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -317,7 +237,7 @@ class _ConnectionState extends ConnectionState {
       {required this.internetStatus,
       required this.serverStatus,
       this.isReconnecting = false,
-      this.nextRetryDelay})
+      this.reconnectAttempt = 0})
       : super._();
 
   @override
@@ -328,7 +248,8 @@ class _ConnectionState extends ConnectionState {
   @JsonKey()
   final bool isReconnecting;
   @override
-  final Duration? nextRetryDelay;
+  @JsonKey()
+  final int reconnectAttempt;
 
   /// Create a copy of ConnectionState
   /// with the given fields replaced by the non-null parameter values.
@@ -349,17 +270,17 @@ class _ConnectionState extends ConnectionState {
                 other.serverStatus == serverStatus) &&
             (identical(other.isReconnecting, isReconnecting) ||
                 other.isReconnecting == isReconnecting) &&
-            (identical(other.nextRetryDelay, nextRetryDelay) ||
-                other.nextRetryDelay == nextRetryDelay));
+            (identical(other.reconnectAttempt, reconnectAttempt) ||
+                other.reconnectAttempt == reconnectAttempt));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, internetStatus, serverStatus,
-      isReconnecting, nextRetryDelay);
+      isReconnecting, reconnectAttempt);
 
   @override
   String toString() {
-    return 'ConnectionState(internetStatus: $internetStatus, serverStatus: $serverStatus, isReconnecting: $isReconnecting, nextRetryDelay: $nextRetryDelay)';
+    return 'ConnectionState(internetStatus: $internetStatus, serverStatus: $serverStatus, isReconnecting: $isReconnecting, reconnectAttempt: $reconnectAttempt)';
   }
 }
 
@@ -375,7 +296,7 @@ abstract mixin class _$ConnectionStateCopyWith<$Res>
       {InternetStatus internetStatus,
       ServerStatus serverStatus,
       bool isReconnecting,
-      Duration? nextRetryDelay});
+      int reconnectAttempt});
 }
 
 /// @nodoc
@@ -394,7 +315,7 @@ class __$ConnectionStateCopyWithImpl<$Res>
     Object? internetStatus = null,
     Object? serverStatus = null,
     Object? isReconnecting = null,
-    Object? nextRetryDelay = freezed,
+    Object? reconnectAttempt = null,
   }) {
     return _then(_ConnectionState(
       internetStatus: null == internetStatus
@@ -409,10 +330,10 @@ class __$ConnectionStateCopyWithImpl<$Res>
           ? _self.isReconnecting
           : isReconnecting // ignore: cast_nullable_to_non_nullable
               as bool,
-      nextRetryDelay: freezed == nextRetryDelay
-          ? _self.nextRetryDelay
-          : nextRetryDelay // ignore: cast_nullable_to_non_nullable
-              as Duration?,
+      reconnectAttempt: null == reconnectAttempt
+          ? _self.reconnectAttempt
+          : reconnectAttempt // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
