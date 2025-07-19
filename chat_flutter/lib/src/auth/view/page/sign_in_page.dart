@@ -50,48 +50,25 @@ class _SignInPageState extends State<SignInPage> {
             create: (_) => getIt<ListChatControllerCubit>()..load(),
           ),
         ],
-        child: BlocListener<ConnectionCubit, ConnectionState>(
-          listener: (context, connectionState) async {
-            final message = switch ((
-              connectionState.internetStatus,
-              connectionState.serverStatus
-            )) {
-              (InternetStatus.available, ServerStatus.connecting) =>
-                'connecting...',
-              (InternetStatus.available, ServerStatus.disconnected) =>
-                'disconnected',
-              (InternetStatus.available, ServerStatus.waitingToRetry) =>
-                'waiting to retry',
-              (InternetStatus.available, ServerStatus.connected) => 'connected',
-              InternetStatus.noInternet => 'no internet',
-              (_, _) => throw UnimplementedError(),
-            };
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(content: Text(message)),
-              );
+        child: BlocBuilder<ListChatControllerCubit, ListChatControllerState>(
+          builder: (context, listChatControllerState) {
+            return Builder(
+              builder: (context) {
+                switch (listChatControllerState) {
+                  case $InitialListChatController():
+                    return _loading(context, "Init 2");
+                  case $LoadingListChatController():
+                    return _loading(context, "L 2");
+                  case $FailureListChatController():
+                    return _loading(context, "F 2");
+                  case $LoadedListChatController():
+                    return MainPage(
+                      chatControllers: listChatControllerState.result,
+                    );
+                }
+              },
+            );
           },
-          child: BlocBuilder<ListChatControllerCubit, ListChatControllerState>(
-            builder: (context, listChatControllerState) {
-              return Builder(
-                builder: (context) {
-                  switch (listChatControllerState) {
-                    case $InitialListChatController():
-                      return _loading(context, "Init 2");
-                    case $LoadingListChatController():
-                      return _loading(context, "L 2");
-                    case $FailureListChatController():
-                      return _loading(context, "F 2");
-                    case $LoadedListChatController():
-                      return MainPage(
-                        chatControllers: listChatControllerState.result,
-                      );
-                  }
-                },
-              );
-            },
-          ),
         ),
       );
     } else {

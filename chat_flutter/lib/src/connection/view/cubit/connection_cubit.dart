@@ -27,8 +27,13 @@ class ConnectionCubit extends Cubit<ConnectionState> {
     _connectionRepository.internetStatus.listen((event) {});
   }
 
-  void retryConnection() {
-    _connectionRepository.retryConnection();
+  Future<void> retryConnection() async {
+    try {
+      print('retryConnection');
+      await _connectionRepository.retryConnection();
+    } catch (e) {
+      addError(e);
+    }
   }
 
   @override

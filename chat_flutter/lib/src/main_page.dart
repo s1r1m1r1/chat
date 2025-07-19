@@ -34,8 +34,8 @@ class MainPageState extends State<MainPage> {
     return Scaffold(
       backgroundColor: Colors.amber,
       appBar: AppBar(
+        actions: [ConnectStatusBar()],
         title: Text(_selected?.channel ?? "not selected"),
-        leading: ConnectStatusBar(),
       ),
       drawer: ChannelDrawer(
         controllers: widget.chatControllers,
