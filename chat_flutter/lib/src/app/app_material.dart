@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-import '../../main.dart';
+import '../auth/view/page/sign_in_page.dart';
+import '../l10n/app_localizations.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -9,6 +11,14 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Serverpod Example',
+      localizationsDelegates: const [
+        AppLocalizations.delegate, // Your app's localization delegate
+        GlobalMaterialLocalizations.delegate, // Material widgets localizations
+        GlobalWidgetsLocalizations.delegate, // Basic widgets localizations
+        GlobalCupertinoLocalizations
+            .delegate, // Cupertino widgets localizations
+      ],
+      // Cupertino widgets localizations
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

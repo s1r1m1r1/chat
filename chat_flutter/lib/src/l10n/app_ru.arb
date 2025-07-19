@@ -1,0 +1,7 @@
+{
+  "@@locale": "ru",
+  "appTitle": "Мое Замечательное Приложение",
+  "helloWorld": "Привет, мир!",
+  "welcomeMessage": "Добро пожаловать, {userName}!",
+  "itemCount": "{count, plural, =0{Нет предметов} =1{1 предмет} few{{count} предмета} many{{count} предметов} other{{count} предмета}}"
+}

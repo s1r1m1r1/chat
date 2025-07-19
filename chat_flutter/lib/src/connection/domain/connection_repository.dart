@@ -13,6 +13,8 @@ abstract class ConnectionRepository {
   Stream<ServerStatus> get serverStatus;
   void init();
   Future<void> dispose();
+
+  Future<void> retryConnection();
 }
 
 @LazySingleton(as: ConnectionRepository)
@@ -23,11 +25,16 @@ class ConnectionRepositoryImpl extends ConnectionRepository {
   final _connectivity = Connectivity();
   final _serverStatusSbj =
       BehaviorSubject<ServerStatus>.seeded(ServerStatus.disconnected);
+  final _internetStatusSbj =
+      BehaviorSubject<InternetStatus>.seeded(InternetStatus.noInternet);
+  StreamSubscription? _connectivitySubscription;
 
   @override
-  void init() {
+  Future<void> init() async {
     client.addStreamingConnectionStatusListener(_changedConnectionStatus);
-    connect();
+    await _connect();
+
+    _listenInternetStatus();
   }
 
   void _changedConnectionStatus() {
@@ -49,39 +56,68 @@ class ConnectionRepositoryImpl extends ConnectionRepository {
     }
   }
 
-  Future<void> connect() async {
+  Future<void> _connect() async {
     _serverStatusSbj.add(ServerStatus.connecting);
     try {
+      // 5 seconds timeous
       // Make sure that the web socket is connected.
       await client.openStreamingConnection();
     } catch (e) {
+      _serverStatusSbj.add(ServerStatus.failed);
       debugPrint(e.toString());
     }
   }
 
   @override
-  Stream<InternetStatus> get internetStatus =>
-      _connectivity.onConnectivityChanged.map((connectivity) {
-        if (connectivity.contains(ConnectivityResult.mobile) ||
-            connectivity.contains(ConnectivityResult.wifi) ||
-            connectivity.contains(ConnectivityResult.ethernet)) {
-          return InternetStatus.available;
-        }
-        return InternetStatus.noInternet;
-      });
+  Stream<InternetStatus> get internetStatus => _internetStatusSbj.stream;
+
+  void _listenInternetStatus() async {
+    final conResult = await _connectivity.checkConnectivity();
+    _internetStatusSbj.value = InternetStatus.fromConnectivityResult(conResult);
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .map(InternetStatus.fromConnectivityResult)
+        .listen(_internetStatusSbj.add);
+  }
 
   @override
   @disposeMethod
   Future<void> dispose() async {
     _serverStatusSbj.close();
+    _internetStatusSbj.close();
+    _connectivitySubscription?.cancel();
     await client.closeStreamingConnection();
     client.removeStreamingConnectionStatusListener(_changedConnectionStatus);
   }
 
   @override
   Stream<ServerStatus> get serverStatus => _serverStatusSbj.stream;
+
+  @override
+  Future<void> retryConnection() async {
+    await client.closeStreamingConnection();
+    init();
+  }
 }
 
-enum InternetStatus { available, noInternet }
+enum InternetStatus {
+  available,
+  noInternet;
 
-enum ServerStatus { connecting, waitingToRetry, disconnected, connected }
+  static InternetStatus fromConnectivityResult(
+      List<ConnectivityResult> connectivityResult) {
+    if (connectivityResult.contains(ConnectivityResult.mobile) ||
+        connectivityResult.contains(ConnectivityResult.wifi) ||
+        connectivityResult.contains(ConnectivityResult.ethernet)) {
+      return InternetStatus.available;
+    }
+    return InternetStatus.noInternet;
+  }
+}
+
+enum ServerStatus {
+  connecting,
+  waitingToRetry,
+  disconnected,
+  connected,
+  failed
+}

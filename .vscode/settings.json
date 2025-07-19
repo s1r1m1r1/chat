@@ -1,14 +1,10 @@
 {
-    // вложенность файлов
-    "explorer.fileNesting.patterns": {
-        "pubspec.yaml": "pubspec.lock,pubspec_overrides.yaml,.packages,.flutter-plugins,.flutter-plugins-dependencies,.metadata,devtools_options.yaml,analysis_options.yaml,.tool-versions,",
-    },
     // видимоcть файлов
     "files.exclude": {
         "i_minipod/**": true,
-        "i_pod/i_pod_flutter/**": false,
-        "i_pod/i_pod_server/**": false,
-        "i_pod/i_pod_client/**": true,
+        "chat_flutter/**": false,
+        "chat_server/**": false,
+        "chat_client/**": true,
     },
     "cSpell.dictionaries": [
         "dart",
