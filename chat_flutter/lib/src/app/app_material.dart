@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:chat_flutter/src/connection/domain/connection_repository.dart';
+import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -12,23 +13,73 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Serverpod Example',
-      localizationsDelegates: const [
-        AppLocalizations.delegate, // Your app's localization delegate
-        GlobalMaterialLocalizations.delegate, // Material widgets localizations
-        GlobalWidgetsLocalizations.delegate, // Basic widgets localizations
-        GlobalCupertinoLocalizations.delegate, // Cupertino widgets localizations
-      ],
-      // Cupertino widgets localizations
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: BlocProvider(
-        create: (_) => getIt<ConnectionBloc>()..add(ConnectionEvent.subscribe()),
-        child: const SignInPage(),
-      ),
+    return BlocProvider(
+      create: (_) => getIt<ConnectionBloc>()
+        ..add(
+          ConnectionEvent.subscribe(),
+        ),
+      child: _AppView(),
+    );
+  }
+}
+
+class _AppView extends StatelessWidget {
+  const _AppView();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ConnectionBloc, ConnectionState>(
+      builder: (context, state) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Serverpod Example',
+          localizationsDelegates: const [
+            AppLocalizations.delegate, // Your app's localization delegate
+            GlobalMaterialLocalizations.delegate, // Material widgets localizations
+            GlobalWidgetsLocalizations.delegate, // Basic widgets localizations
+            GlobalCupertinoLocalizations.delegate, // Cupertino widgets localizations
+          ],
+          // Cupertino widgets localizations
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          builder: (context, child) {
+            // overlay
+            if (state.serverStatus != ServerStatus.disconnected) {
+              return Stack(
+                children: [
+                  child!,
+                  Container(color: Colors.black45),
+                  Center(
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 30, 12, 30),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(AppLocalizations.of(context)!.connectionStatusWaitingToRetry,
+                                style: const TextStyle(fontWeight: FontWeight.bold)),
+                            SizedBox(height: 32),
+                            TextButton.icon(
+                              onPressed: () {
+                                context.read<ConnectionBloc>().add(ConnectionEvent.retryConnection());
+                              },
+                              label: Text('Retry'),
+                              icon: Icon(Icons.wifi_tethering),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+            return child!;
+          },
+          home: const SignInPage(),
+        );
+      },
     );
   }
 }
