@@ -98,29 +98,41 @@ abstract class AppLocalizations {
     Locale('ru')
   ];
 
-  /// No description provided for @appTitle.
+  /// No description provided for @connectionStatusConnecting.
   ///
   /// In en, this message translates to:
-  /// **'My Awesome App'**
-  String get appTitle;
+  /// **'connecting...'**
+  String get connectionStatusConnecting;
 
-  /// No description provided for @helloWorld.
+  /// No description provided for @connectionStatusServerNotAvailable.
   ///
   /// In en, this message translates to:
-  /// **'Hello World!'**
-  String get helloWorld;
+  /// **'server not available'**
+  String get connectionStatusServerNotAvailable;
 
-  /// A welcome message with a placeholder for the user's name
+  /// No description provided for @connectionStatusWaitingToRetry.
   ///
   /// In en, this message translates to:
-  /// **'Welcome, {userName}!'**
-  String welcomeMessage(String userName);
+  /// **'waiting to retry'**
+  String get connectionStatusWaitingToRetry;
 
-  /// Number of items with pluralization
+  /// No description provided for @connectionStatusConnected.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =0{No items} =1{1 item} other{{count} items}}'**
-  String itemCount(int count);
+  /// **'connected'**
+  String get connectionStatusConnected;
+
+  /// No description provided for @connectionStatusFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'failed'**
+  String get connectionStatusFailed;
+
+  /// No description provided for @connectionStatusNoInternet.
+  ///
+  /// In en, this message translates to:
+  /// **'no internet'**
+  String get connectionStatusNoInternet;
 }
 
 class _AppLocalizationsDelegate

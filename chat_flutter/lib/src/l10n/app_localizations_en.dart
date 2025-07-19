@@ -9,25 +9,20 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'My Awesome App';
+  String get connectionStatusConnecting => 'connecting...';
 
   @override
-  String get helloWorld => 'Hello World!';
+  String get connectionStatusServerNotAvailable => 'server not available';
 
   @override
-  String welcomeMessage(String userName) {
-    return 'Welcome, $userName!';
-  }
+  String get connectionStatusWaitingToRetry => 'waiting to retry';
 
   @override
-  String itemCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count items',
-      one: '1 item',
-      zero: 'No items',
-    );
-    return '$_temp0';
-  }
+  String get connectionStatusConnected => 'connected';
+
+  @override
+  String get connectionStatusFailed => 'failed';
+
+  @override
+  String get connectionStatusNoInternet => 'no internet';
 }

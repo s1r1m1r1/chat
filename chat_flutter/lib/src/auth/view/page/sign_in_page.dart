@@ -6,8 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serverpod_auth_email_flutter/serverpod_auth_email_flutter.dart';
 
 import '../../../chat/view/cubit/list_chat_controller_cubit.dart';
-import '../../../connection/domain/connection_repository.dart';
-import '../../../connection/view/cubit/connection_cubit.dart';
 import '../../../inject/inject.dart';
 import '../../../main_page.dart';
 import '../../../user/view/bloc/server_env_cubit.dart';
@@ -37,10 +35,6 @@ class _SignInPageState extends State<SignInPage> {
     if (sessionManager.isSignedIn) {
       return MultiBlocProvider(
         providers: [
-          BlocProvider(
-            lazy: false,
-            create: (_) => getIt<ConnectionCubit>()..subscribe(),
-          ),
           BlocProvider(
             lazy: false,
             create: (_) => getIt<ServerEnvCubit>()..init(),

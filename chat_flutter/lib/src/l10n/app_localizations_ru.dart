@@ -9,27 +9,20 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get appTitle => 'Мое Замечательное Приложение';
+  String get connectionStatusConnecting => 'подключение...';
 
   @override
-  String get helloWorld => 'Привет, мир!';
+  String get connectionStatusServerNotAvailable => 'сервер недоступен';
 
   @override
-  String welcomeMessage(String userName) {
-    return 'Добро пожаловать, $userName!';
-  }
+  String get connectionStatusWaitingToRetry => 'ожидание повторной попытки';
 
   @override
-  String itemCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count предмета',
-      many: '$count предметов',
-      few: '$count предмета',
-      one: '1 предмет',
-      zero: 'Нет предметов',
-    );
-    return '$_temp0';
-  }
+  String get connectionStatusConnected => 'подключено';
+
+  @override
+  String get connectionStatusFailed => 'ошибка';
+
+  @override
+  String get connectionStatusNoInternet => 'нет интернета';
 }
