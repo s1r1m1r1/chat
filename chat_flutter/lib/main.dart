@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:chat_flutter/src/app/app_bloc_observer.dart';
 import 'package:chat_flutter/src/inject/inject.dart';
 import 'package:flutter/material.dart' hide ConnectionState;
@@ -5,9 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 import 'package:chat_client/chat_client.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
-import 'package:talker_bloc_logger/talker_bloc_logger_settings.dart';
-
+import 'package:logging/logging.dart';
 import 'src/app/app_material.dart';
+import 'src/utils/logger_utils.dart';
 
 late SessionManager sessionManager;
 late Client client;
@@ -35,22 +37,24 @@ void main() async {
   );
   await sessionManager.initialize();
   configureDependencies();
-  Bloc.observer = MyTalkerBlocObserver(
-    settings: TalkerBlocLoggerSettings(
-      enabled: true,
-      printEventFullData: false,
-      printStateFullData: false,
-      printChanges: true,
-      printClosings: true,
-      printCreations: true,
-      printEvents: true,
-      printTransitions: true,
-      // If you want log only AuthBloc transitions
-      transitionFilter: (bloc, transition) =>
-          bloc.runtimeType.toString() == 'AuthBloc',
-      // If you want log only AuthBloc events
-      eventFilter: (bloc, event) => bloc.runtimeType.toString() == 'AuthBloc',
-    ),
-  );
+  Bloc.observer = MyBlocObserver();
+  hierarchicalLoggingEnabled = true;
+  Logger.root.onRecord.listen(watchRecords);
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrintStack(
+      stackTrace: stack,
+      label: '${red}PlatformDispatcher$reset$error',
+    );
+    return true;
+  };
+
+  FlutterError.onError = (details) {
+    debugPrintStack(
+      stackTrace: details.stack,
+      label: '${red}FlutterError.onError$reset${details.exception}',
+    );
+  };
+
   runApp(const App());
 }

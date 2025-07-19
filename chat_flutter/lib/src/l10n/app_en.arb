@@ -1,23 +1,10 @@
 {
   "@@locale": "en",
-  "appTitle": "My Awesome App",
-  "helloWorld": "Hello World!",
-  "welcomeMessage": "Welcome, {userName}!",
-  "@welcomeMessage": {
-    "description": "A welcome message with a placeholder for the user's name",
-    "placeholders": {
-      "userName": {
-        "type": "String"
-      }
-    }
-  },
-  "itemCount": "{count, plural, =0{No items} =1{1 item} other{{count} items}}",
-  "@itemCount": {
-    "description": "Number of items with pluralization",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  }
+  "connectionStatusConnecting": "connecting...",
+  "connectionStatusServerNotAvailable": "server not available",
+  "connectionStatusWaitingToRetry": "waiting to retry",
+  "connectionStatusConnected": "connected",
+  "connectionStatusFailed": "failed",
+  "connectionStatusNoInternet": "no internet"
+
 }

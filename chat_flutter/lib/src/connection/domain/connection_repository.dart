@@ -1,3 +1,4 @@
+// connection_repository.dart
 import 'dart:async';
 
 import 'package:chat_client/chat_client.dart';
@@ -6,70 +7,91 @@ import 'package:injectable/injectable.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../../../main.dart';
+import '../../../main.dart'; // Assuming 'client' is accessible via main.dart
 
 abstract class ConnectionRepository {
   Stream<InternetStatus> get internetStatus;
   Stream<ServerStatus> get serverStatus;
-  void init();
-  Future<void> dispose();
+  Future<InternetStatus> getCurrentInternetStatus(); // Added for initial sync
+  Future<ServerStatus> getCurrentServerStatus(); // Added for initial sync
 
-  Future<void> retryConnection();
+  // Direct actions to interact with the chat client
+  Future<void> openStreamingConnection();
+  Future<void> closeStreamingConnection();
+
+  void init(); // Still needed for client listeners and initial setup
+  Future<void> dispose();
 }
 
 @LazySingleton(as: ConnectionRepository)
 class ConnectionRepositoryImpl extends ConnectionRepository {
   ConnectionRepositoryImpl() {
-    init();
+    init(); // Call init immediately on creation
   }
+
   final _connectivity = Connectivity();
   final _serverStatusSbj =
       BehaviorSubject<ServerStatus>.seeded(ServerStatus.disconnected);
   final _internetStatusSbj =
       BehaviorSubject<InternetStatus>.seeded(InternetStatus.noInternet);
+
   StreamSubscription? _connectivitySubscription;
 
   @override
-  Future<void> init() async {
+  void init() {
+    // Only add listeners here. No connection attempts.
     client.addStreamingConnectionStatusListener(_changedConnectionStatus);
-    await _connect();
-
     _listenInternetStatus();
   }
 
+  // Maps chat client's status to our ServerStatus enum
   void _changedConnectionStatus() {
+    ServerStatus newStatus;
+    switch (client.streamingConnectionStatus) {
+      case StreamingConnectionStatus.disconnected:
+        newStatus = ServerStatus.disconnected;
+        break;
+      case StreamingConnectionStatus.connected:
+        newStatus = ServerStatus.connected;
+        break;
+      case StreamingConnectionStatus.connecting:
+        newStatus = ServerStatus.connecting;
+        break;
+      case StreamingConnectionStatus.waitingToRetry:
+        newStatus = ServerStatus.waitingToRetry;
+        break;
+    }
+    _serverStatusSbj.add(newStatus);
+    debugPrint(
+        'ConnectionRepository: Client streaming status changed to: $newStatus');
+  }
+
+  @override
+  Future<void> openStreamingConnection() async {
     if (client.streamingConnectionStatus ==
         StreamingConnectionStatus.disconnected) {
-      _serverStatusSbj.add(ServerStatus.disconnected);
-    }
-    if (client.streamingConnectionStatus ==
-        StreamingConnectionStatus.connected) {
-      _serverStatusSbj.add(ServerStatus.connected);
-    }
-    if (client.streamingConnectionStatus ==
-        StreamingConnectionStatus.connecting) {
-      _serverStatusSbj.add(ServerStatus.connecting);
-    }
-    if (client.streamingConnectionStatus ==
-        StreamingConnectionStatus.waitingToRetry) {
-      _serverStatusSbj.add(ServerStatus.waitingToRetry);
+      await client.openStreamingConnection();
     }
   }
 
-  Future<void> _connect() async {
-    _serverStatusSbj.add(ServerStatus.connecting);
-    try {
-      // 5 seconds timeous
-      // Make sure that the web socket is connected.
-      await client.openStreamingConnection();
-    } catch (e) {
-      _serverStatusSbj.add(ServerStatus.failed);
-      debugPrint(e.toString());
-    }
+  @override
+  Future<void> closeStreamingConnection() async {
+    await client.closeStreamingConnection();
   }
 
   @override
   Stream<InternetStatus> get internetStatus => _internetStatusSbj.stream;
+
+  @override
+  Future<InternetStatus> getCurrentInternetStatus() async {
+    final conResult = await _connectivity.checkConnectivity();
+    return InternetStatus.fromConnectivityResult(conResult);
+  }
+
+  @override
+  Future<ServerStatus> getCurrentServerStatus() async {
+    return _serverStatusSbj.value;
+  }
 
   void _listenInternetStatus() async {
     final conResult = await _connectivity.checkConnectivity();
@@ -82,21 +104,18 @@ class ConnectionRepositoryImpl extends ConnectionRepository {
   @override
   @disposeMethod
   Future<void> dispose() async {
+    debugPrint('ConnectionRepositoryImpl disposing.');
     _serverStatusSbj.close();
     _internetStatusSbj.close();
     _connectivitySubscription?.cancel();
-    await client.closeStreamingConnection();
+    // Ensure client resources are properly released
     client.removeStreamingConnectionStatusListener(_changedConnectionStatus);
+    await client
+        .closeStreamingConnection(); // Ensure client is closed on dispose
   }
 
   @override
   Stream<ServerStatus> get serverStatus => _serverStatusSbj.stream;
-
-  @override
-  Future<void> retryConnection() async {
-    await client.closeStreamingConnection();
-    init();
-  }
 }
 
 enum InternetStatus {
