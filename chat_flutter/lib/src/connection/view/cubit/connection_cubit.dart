@@ -27,6 +27,10 @@ class ConnectionCubit extends Cubit<ConnectionState> {
     _connectionRepository.internetStatus.listen((event) {});
   }
 
+  void retryConnection() {
+    _connectionRepository.retryConnection();
+  }
+
   @override
   Future<void> close() {
     _streamSubscription?.cancel();

@@ -1,4 +1,5 @@
 import 'package:chat_flutter/src/chat/view/page/chat_page.dart';
+import 'package:chat_flutter/src/connection/view/widget/connect_status_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:serverpod_chat_flutter/serverpod_chat_flutter.dart';
 
@@ -34,6 +35,7 @@ class MainPageState extends State<MainPage> {
       backgroundColor: Colors.amber,
       appBar: AppBar(
         title: Text(_selected?.channel ?? "not selected"),
+        leading: ConnectStatusBar(),
       ),
       drawer: ChannelDrawer(
         controllers: widget.chatControllers,

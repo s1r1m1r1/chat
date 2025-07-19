@@ -13,6 +13,8 @@ abstract class ConnectionRepository {
   Stream<ServerStatus> get serverStatus;
   void init();
   Future<void> dispose();
+
+  Future<void> retryConnection();
 }
 
 @LazySingleton(as: ConnectionRepository)
@@ -27,7 +29,7 @@ class ConnectionRepositoryImpl extends ConnectionRepository {
   @override
   void init() {
     client.addStreamingConnectionStatusListener(_changedConnectionStatus);
-    connect();
+    _connect();
   }
 
   void _changedConnectionStatus() {
@@ -49,12 +51,14 @@ class ConnectionRepositoryImpl extends ConnectionRepository {
     }
   }
 
-  Future<void> connect() async {
+  Future<void> _connect() async {
     _serverStatusSbj.add(ServerStatus.connecting);
     try {
+      // 5 seconds timeous
       // Make sure that the web socket is connected.
       await client.openStreamingConnection();
     } catch (e) {
+      _serverStatusSbj.add(ServerStatus.failed);
       debugPrint(e.toString());
     }
   }
@@ -80,8 +84,20 @@ class ConnectionRepositoryImpl extends ConnectionRepository {
 
   @override
   Stream<ServerStatus> get serverStatus => _serverStatusSbj.stream;
+
+  @override
+  Future<void> retryConnection() async {
+    await dispose();
+    init();
+  }
 }
 
 enum InternetStatus { available, noInternet }
 
-enum ServerStatus { connecting, waitingToRetry, disconnected, connected }
+enum ServerStatus {
+  connecting,
+  waitingToRetry,
+  disconnected,
+  connected,
+  failed
+}

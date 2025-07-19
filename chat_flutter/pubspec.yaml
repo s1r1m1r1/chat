@@ -35,6 +35,9 @@ dependencies:
   serverpod_flutter: 2.9.1
   chat_client:
     path: ../chat_client
+  flutter_localizations: # Provides localization framework for Flutter
+    sdk: flutter
+  intl: ^0.20.2 # Helps with localization of strings, numbers, dates, etc.
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -67,7 +70,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-
+  generate: true # <--- l10n generate 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
