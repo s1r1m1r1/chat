@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
+import 'log_colors.dart';
+
 void watchRecords(LogRecord rec) {
-  // ---- filter --------
   if (rec.stackTrace != null) {
     debugPrintStack(
       stackTrace: rec.stackTrace,
@@ -28,14 +29,3 @@ extension LevelExt on Level {
         Level.OFF || _ => '',
       };
 }
-
-// not supported colors for iOS
-final black = defaultTargetPlatform == TargetPlatform.iOS ? "" : "\x1B[30m";
-final red = defaultTargetPlatform == TargetPlatform.iOS ? "" : "\x1B[31m";
-final green = defaultTargetPlatform == TargetPlatform.iOS ? "" : "\x1B[32m";
-final yellow = defaultTargetPlatform == TargetPlatform.iOS ? "" : "\x1B[33m";
-final blue = defaultTargetPlatform == TargetPlatform.iOS ? "" : "\x1B[34m";
-final magenta = defaultTargetPlatform == TargetPlatform.iOS ? "" : "\x1B[35m";
-final cyan = defaultTargetPlatform == TargetPlatform.iOS ? "" : "\x1B[36m";
-final white = defaultTargetPlatform == TargetPlatform.iOS ? "" : "\x1B[37m";
-final reset = defaultTargetPlatform == TargetPlatform.iOS ? "" : "\x1B[0m";

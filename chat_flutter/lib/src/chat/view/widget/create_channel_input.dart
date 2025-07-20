@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-class NewChannelWidget extends StatefulWidget {
+class CreateChannelInput extends StatefulWidget {
   final void Function(String) onAddChannel;
 
-  const NewChannelWidget({
+  const CreateChannelInput({
     super.key,
     required this.onAddChannel,
   });
 
   @override
-  State<NewChannelWidget> createState() => _NewChannelWidgetState();
+  State<CreateChannelInput> createState() => _CreateChannelInputState();
 }
 
-class _NewChannelWidgetState extends State<NewChannelWidget> {
+class _CreateChannelInputState extends State<CreateChannelInput> {
   final _formKey = GlobalKey<FormState>();
   final _channelController = TextEditingController();
 

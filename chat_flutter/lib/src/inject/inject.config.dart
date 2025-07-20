@@ -9,6 +9,8 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:chat_flutter/src/auth/domain/auth_repository.dart' as _i943;
+import 'package:chat_flutter/src/auth/view/bloc/auth_cubit.dart' as _i201;
 import 'package:chat_flutter/src/chat/domain/chat_repository.dart' as _i513;
 import 'package:chat_flutter/src/chat/view/cubit/list_chat_controller_cubit.dart'
     as _i320;
@@ -42,8 +44,14 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i504.ConnectionRepositoryImpl(),
       dispose: (i) => i.dispose(),
     );
+    gh.lazySingleton<_i943.AuthRepository>(
+      () => _i943.AuthRepositoryImpl(),
+      dispose: (i) => i.dispose(),
+    );
     gh.factory<_i480.ConnectionBloc>(
         () => _i480.ConnectionBloc(gh<_i504.ConnectionRepository>()));
+    gh.factory<_i201.AuthCubit>(
+        () => _i201.AuthCubit(gh<_i943.AuthRepository>()));
     gh.lazySingleton<_i513.ChatRepository>(
       () => _i513.ChatRepositoryImpl(gh<_i470.UserRepository>()),
       dispose: (i) => i.dispose(),
