@@ -32,8 +32,8 @@
 /build/
 
 # Code for different platforms
-/ios/
-/android/
+# /ios/
+# /android/
 /linux/
 /macos/
 /windows/
