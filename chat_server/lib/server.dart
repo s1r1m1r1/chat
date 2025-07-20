@@ -1,6 +1,8 @@
 import 'package:chat_server/src/box/populate_database.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server/gmail.dart';
 import 'package:serverpod_chat_server/serverpod_chat_server.dart' as chat;
 
 import 'src/generated/protocol.dart';
@@ -15,6 +17,16 @@ void run(List<String> args) async {
     args,
     Protocol(),
     Endpoints(),
+    // authenticationHandler: (
+    //   Session session,
+    //   String key,
+    // ) async {
+    //   /// Bearer token validation handler
+    //   var (uid, scopes) = await myBearerTokenValidator(session, token);
+    //   if (uid == null || scopes == null) return null;
+
+    //   return AuthenticationInfo(uid, scopes);
+    // },
     authenticationHandler: auth.authenticationHandler,
   );
 
@@ -22,25 +34,54 @@ void run(List<String> args) async {
   // console. In a real-world application, these methods would send emails to
   // the users to validate their email.
   auth.AuthConfig.set(auth.AuthConfig(
-    minPasswordLength: 3,
-    onUserCreated: (session, userInfo) async {
-      session.log('Created user ${userInfo.userName}');
-
-      await UserOption.db.insertRow(
-        session,
-        UserOption(
-          userId: userInfo.id!,
-        ),
-      );
-    },
     sendValidationEmail: (session, email, validationCode) async {
-      print('Validation code: $validationCode');
-      session.log('Code for $email is $validationCode');
+      // Retrieve the credentials
+      final gmailEmail = session.serverpod.getPassword('gmailEmail')!;
+      final gmailPassword = session.serverpod.getPassword('gmailPassword')!;
+
+      // Create a SMTP client for Gmail.
+      final smtpServer = gmail(gmailEmail, gmailPassword);
+
+      // Create an email message with the validation code.
+      final message = Message()
+        ..from = Address(gmailEmail)
+        ..recipients.add(email)
+        ..subject = 'Verification code for Serverpod'
+        ..html = 'Your verification code is: $validationCode';
+
+      // Send the email message.
+      try {
+        await send(message, smtpServer);
+      } catch (_) {
+        // Return false if the email could not be sent.
+        return false;
+      }
+
       return true;
     },
     sendPasswordResetEmail: (session, userInfo, validationCode) async {
-      print('Validation code: $validationCode');
-      session.log('Code for ${userInfo.userName} is $validationCode');
+      // Retrieve the credentials
+      final gmailEmail = session.serverpod.getPassword('gmailEmail')!;
+      final gmailPassword = session.serverpod.getPassword('gmailPassword')!;
+
+      // Create a SMTP client for Gmail.
+      final smtpServer = gmail(gmailEmail, gmailPassword);
+
+      // Create an email message with the password reset link.
+      final message = Message()
+        ..from = Address(gmailEmail)
+        ..recipients.add(userInfo.email!)
+        ..subject = 'Password reset link for Serverpod'
+        ..html = 'Here is your password reset code: $validationCode';
+
+      // Send the email message.
+      try {
+        await send(message, smtpServer);
+      } catch (_) {
+        // Return false if the email could not be sent.
+        return false;
+      }
+
       return true;
     },
   ));
@@ -53,6 +94,16 @@ void run(List<String> args) async {
     postMessagesGlobally: false,
   ));
 
+  // Setup a redirect route for Google sign in. Responsible for sending back
+  // the serverAuthCode to the client and closing the signin window, after a
+  // successful sign in.
+  pod.webServer.addRoute(auth.RouteGoogleSignIn(), '/googlesignin');
+
+  // Serve all files in the /static directory.
+  pod.webServer.addRoute(
+    RouteStaticDirectory(serverDirectory: 'static', basePath: '/'),
+    '/*',
+  );
   // Start the server.
   await pod.start();
 

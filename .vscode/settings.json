@@ -11,7 +11,9 @@
     ],
     //install extension Russian - Code Spell Checker
     "cSpell.language": "en,ru",
-    "cSpell.words": [],
+    "cSpell.words": [
+        "googlesignin"
+    ],
     "cSpell.ignorePaths": [
         "vscode-extension", //
         ".git",
