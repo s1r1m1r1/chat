@@ -40,7 +40,6 @@
 
 # Web related
 lib/generated_plugin_registrant.dart
-lib/env_keys.dart
 
 # Symbolication related
 app.*.symbols
