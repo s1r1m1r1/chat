@@ -11,6 +11,7 @@ import 'package:logging/logging.dart';
 import 'src/app/app.dart';
 import 'src/app/logger/log_colors.dart';
 import 'src/app/logger/logger_utils.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 late SessionManager sessionManager;
 late Client client;
@@ -56,6 +57,6 @@ void main() async {
       label: '${red}FlutterError.onError$reset${details.exception}',
     );
   };
-
+  usePathUrlStrategy();
   runApp(const App());
 }
