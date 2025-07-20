@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:chat_flutter/src/app/app_bloc_observer.dart';
 import 'package:chat_flutter/src/inject/inject.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
@@ -57,6 +58,6 @@ void main() async {
       label: '${red}FlutterError.onError$reset${details.exception}',
     );
   };
-  usePathUrlStrategy();
+  if (kIsWeb) usePathUrlStrategy();
   runApp(const App());
 }

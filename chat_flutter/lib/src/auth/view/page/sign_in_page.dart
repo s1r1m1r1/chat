@@ -1,9 +1,10 @@
 import 'package:chat_flutter/main.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:serverpod_auth_apple_flutter/serverpod_auth_apple_flutter.dart';
 import 'package:serverpod_auth_email_flutter/serverpod_auth_email_flutter.dart';
 import 'package:serverpod_auth_google_flutter/serverpod_auth_google_flutter.dart';
-
+import 'package:google_sign_in/google_sign_in.dart' as googleSignin;
 import '../../../../env_keys.dart';
 
 class SignInPage extends StatelessWidget {
@@ -24,12 +25,23 @@ class SignInPage extends StatelessWidget {
                 SignInWithEmailButton(
                   caller: client.modules.auth,
                 ),
-                SignInWithGoogleButton(
+                () {
+                  return SignInWithGoogleButton(
+                    caller: client.modules.auth,
+                    clientId: kIsWeb ? null : googleClientId, // Client ID of the client (null on web)
+                    serverClientId: googleWebClientId, // Client ID from the server (required on web)
+                    redirectUri: Uri.parse('http://localhost:8082/googlesignin'),
+                    onFailure: () {
+                      debugPrint("\n\nFailure GOOGLE\n\n");
+                    },
+                  );
+                }(),
+                SignInWithAppleButton(
+                  onFailure: () {
+                    debugPrint("\n\nFailure APPLE\n\n");
+                  },
                   caller: client.modules.auth,
-                  // clientId: kIsWeb ? null , // Client ID of the client (null on web)
-                  serverClientId: kIsWeb ? googleClientId : null, // Client ID from the server (required on web)
-                  redirectUri: Uri.parse('http://localhost:8082/googlesignin'),
-                )
+                ),
               ],
             ),
           ),

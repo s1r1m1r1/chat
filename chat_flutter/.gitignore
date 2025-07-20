@@ -32,15 +32,14 @@
 /build/
 
 # Code for different platforms
-/ios/
-/android/
+# /ios/
+# /android/
 /linux/
 /macos/
 /windows/
 
 # Web related
 lib/generated_plugin_registrant.dart
-lib/env_keys.dart
 
 # Symbolication related
 app.*.symbols
