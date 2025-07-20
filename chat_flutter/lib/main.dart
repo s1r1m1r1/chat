@@ -8,8 +8,9 @@ import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart
 import 'package:chat_client/chat_client.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:logging/logging.dart';
-import 'src/app/app_material.dart';
-import 'src/utils/logger_utils.dart';
+import 'src/app/app.dart';
+import 'src/app/logger/log_colors.dart';
+import 'src/app/logger/logger_utils.dart';
 
 late SessionManager sessionManager;
 late Client client;

@@ -8,18 +8,12 @@ part of 'routes.dart';
 
 List<RouteBase> get $appRoutes => [
       $homeRoute,
+      $signInRoute,
     ];
 
 RouteBase get $homeRoute => GoRouteData.$route(
-      path: '/',
-      name: 'Home',
+      path: '/home',
       factory: _$HomeRoute._fromState,
-      routes: [
-        GoRouteData.$route(
-          path: 'family/:familyId',
-          factory: _$FamilyRoute._fromState,
-        ),
-      ],
     );
 
 mixin _$HomeRoute on GoRouteData {
@@ -27,7 +21,7 @@ mixin _$HomeRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location(
-        '/',
+        '/home',
       );
 
   @override
@@ -44,16 +38,17 @@ mixin _$HomeRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$FamilyRoute on GoRouteData {
-  static FamilyRoute _fromState(GoRouterState state) => FamilyRoute(
-        state.pathParameters['familyId']!,
-      );
+RouteBase get $signInRoute => GoRouteData.$route(
+      path: '/signin',
+      factory: _$SignInRoute._fromState,
+    );
 
-  FamilyRoute get _self => this as FamilyRoute;
+mixin _$SignInRoute on GoRouteData {
+  static SignInRoute _fromState(GoRouterState state) => const SignInRoute();
 
   @override
   String get location => GoRouteData.$location(
-        '/family/${Uri.encodeComponent(_self.familyId)}',
+        '/signin',
       );
 
   @override

@@ -2,6 +2,7 @@ import 'package:chat_flutter/main.dart';
 import 'package:flutter/material.dart';
 import 'package:serverpod_chat_flutter/serverpod_chat_flutter.dart';
 import 'package:custom_clippers/custom_clippers.dart';
+import 'package:custom_text/custom_text.dart';
 
 /// Shows the ChatView and ChatInput for a chat controller.
 class ChatPage extends StatelessWidget {
@@ -22,16 +23,14 @@ class ChatPage extends StatelessWidget {
           child: ChatView(
               controller: controller,
               tileBuilder: (context, current, previous) {
-                final isUser =
-                    current.sender == sessionManager.signedInUser?.id;
+                final isUser = current.sender == sessionManager.signedInUser?.id;
                 final sameSender = current.sender == previous?.sender;
 
                 return _MessageBox(
                   sameSender: sameSender,
                   avatarUrl: current.senderInfo?.imageUrl,
                   isUser: isUser,
-                  timeFormatted:
-                      "${current.time.hour} : ${current.time.minute.toString().padLeft(2, '0')}",
+                  timeFormatted: "${current.time.hour} : ${current.time.minute.toString().padLeft(2, '0')}",
                   message: current.message,
                   senderName: current.senderInfo?.userName ?? '',
                   onTap: () {
@@ -79,8 +78,7 @@ class _MessageBox extends StatefulWidget {
   State<_MessageBox> createState() => _MessageBoxState();
 }
 
-class _MessageBoxState extends State<_MessageBox>
-    with SingleTickerProviderStateMixin {
+class _MessageBoxState extends State<_MessageBox> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final messageStyle = TextStyle(color: Colors.black, fontSize: 14);
@@ -91,9 +89,7 @@ class _MessageBoxState extends State<_MessageBox>
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.red,
-        image: widget.avatarUrl != null
-            ? DecorationImage(image: NetworkImage(widget.avatarUrl!))
-            : null,
+        image: widget.avatarUrl != null ? DecorationImage(image: NetworkImage(widget.avatarUrl!)) : null,
       ),
     );
     return LayoutBuilder(builder: (context, constraint) {
@@ -104,14 +100,9 @@ class _MessageBoxState extends State<_MessageBox>
         Flexible(
           child: ClipPath(
             clipper: !widget.sameSender
-                ? UpperNipMessageClipper(
-                    widget.isUser ? MessageType.send : MessageType.receive,
-                    bubbleRadius: 8,
-                    sizeOfNip: 4,
-                    sizeRatio: 4)
-                : ShapeBorderClipper(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8)))),
+                ? UpperNipMessageClipper(widget.isUser ? MessageType.send : MessageType.receive,
+                    bubbleRadius: 8, sizeOfNip: 4, sizeRatio: 4)
+                : ShapeBorderClipper(shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)))),
             child: GestureDetector(
               onTap: () {
                 widget.onTap();
@@ -128,21 +119,32 @@ class _MessageBoxState extends State<_MessageBox>
                         children: [
                           if (!widget.sameSender)
                             RichText(
-                              text: TextSpan(
-                                  text: _MessageBox.tabStr,
-                                  style: messageStyle,
-                                  children: [
-                                    TextSpan(
-                                        text: widget.senderName,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.purple[800],
-                                            fontWeight: FontWeight.w900))
-                                  ]),
+                              text: TextSpan(text: _MessageBox.tabStr, style: messageStyle, children: [
+                                TextSpan(
+                                    text: widget.senderName,
+                                    style:
+                                        TextStyle(fontSize: 14, color: Colors.purple[800], fontWeight: FontWeight.w900))
+                              ]),
                             ),
-                          Text(
+                          CustomText(
                             "${_MessageBox.tabStr}${widget.message}",
                             style: messageStyle,
+                            definitions: [
+                              const TextDefinition(matcher: UrlMatcher()),
+                              const TextDefinition(matcher: EmailMatcher()),
+                              TextDefinition(
+                                matcher: const TelMatcher(r'(?:\+?[1-9]\d{0,4})?(?:[- ]?\d{1,4})+'),
+                                // Styles and handlers specified in a definition take
+                                // precedence over the equivalent arguments of CustomText.
+                                matchStyle: const TextStyle(
+                                  color: Colors.green,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                tapStyle: const TextStyle(color: Colors.orange),
+                                onTap: (details) => debugPrint(details.actionText),
+                                onLongPress: (details) => debugPrint('[Long press on Tel#] ${details.actionText}'),
+                              ),
+                            ],
                           ),
                           // reserved space for bottom
                           SizedBox(height: 32, width: 100),
@@ -157,10 +159,7 @@ class _MessageBoxState extends State<_MessageBox>
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(widget.timeFormatted,
-                              style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.black54)),
+                              style: TextStyle(fontSize: 10, fontWeight: FontWeight.normal, color: Colors.black54)),
                           SizedBox(width: 2),
                           //  done
                           Icon(Icons.done_all, size: 14),
@@ -184,9 +183,7 @@ class _MessageBoxState extends State<_MessageBox>
             width: constraint.maxWidth * 0.8,
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: widget.isUser
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
+              crossAxisAlignment: widget.isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisSize: MainAxisSize.min,

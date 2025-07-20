@@ -1,31 +1,25 @@
+import 'package:chat_flutter/src/auth/view/page/sign_in_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../main_page.dart';
+import '../../home/view/home_page.dart';
+
 part 'routes.g.dart';
 
-@TypedGoRoute<HomeRoute>(
-  path: '/',
-  name: 'Home',
-  routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<FamilyRoute>(path: 'family/:familyId')
-  ],
-)
+@TypedGoRoute<HomeRoute>(path: HomeRoute.path)
 class HomeRoute extends GoRouteData with _$HomeRoute {
   const HomeRoute();
+  static const path = '/home';
 
   @override
-  // Widget build(BuildContext context, GoRouterState state) => const MainPage();
-  Widget build(BuildContext context, GoRouterState state) => const Text('');
+  Widget build(context, state) => const HomePage();
 }
 
-class FamilyRoute extends GoRouteData with _$FamilyRoute {
-  const FamilyRoute(this.familyId);
-
-  final String familyId;
+@TypedGoRoute<SignInRoute>(path: SignInRoute.path)
+class SignInRoute extends GoRouteData with _$SignInRoute {
+  static const path = '/signin';
+  const SignInRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return Text('');
-  }
+  Widget build(context, state) => SignInPage();
 }
