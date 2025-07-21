@@ -4,7 +4,7 @@ import 'package:logging/logging.dart';
 import 'logger/log_colors.dart';
 
 class MyBlocObserver extends BlocObserver {
-  static const String loggerName = '\nBlocObserver';
+  static const String loggerName = 'BlocObserver';
   MyBlocObserver();
   late final _logger = Logger(loggerName);
 
@@ -20,9 +20,21 @@ class MyBlocObserver extends BlocObserver {
     super.onError(bloc, error, stackTrace);
   }
 
+  // @override
+  // void onChange(BlocBase bloc, Change change) {
+  //   _logger.info(': ${bloc.runtimeType}:\nstate: ${change.nextState}');
+  //   super.onChange(bloc, change);
+  // }
   @override
-  void onChange(BlocBase bloc, Change change) {
-    _logger.info(': ${bloc.runtimeType}:\nstate: ${change.nextState}');
-    super.onChange(bloc, change);
+  void onTransition(Bloc bloc, Transition transition) {
+    _logger.info('${bloc.runtimeType}:\n'
+        'event: ${transition.event}\n'
+        'state: ${transition.nextState}');
+    super.onTransition(bloc, transition);
+  }
+
+  @override
+  void onCreate(BlocBase bloc) {
+    super.onCreate(bloc);
   }
 }
