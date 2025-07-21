@@ -8,6 +8,7 @@ abstract class AuthRepository {
   void init();
   void dispose();
 
+  AuthStatus get authStatus;
   Stream<AuthStatus> get authStatusStream;
 }
 
@@ -36,4 +37,7 @@ class AuthRepositoryImpl extends AuthRepository {
   void dispose() {
     sessionManager.removeListener(_onChangeSessionStatus);
   }
+
+  @override
+  AuthStatus get authStatus => _authStatusSbj.value;
 }

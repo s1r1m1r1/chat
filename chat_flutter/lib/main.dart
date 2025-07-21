@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:chat_flutter/src/app/app_bloc_observer.dart';
 import 'package:chat_flutter/src/inject/inject.dart';
 import 'package:flutter/foundation.dart';

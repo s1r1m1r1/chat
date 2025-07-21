@@ -3,11 +3,13 @@ import 'package:chat_flutter/src/chat/view/page/chat_page.dart';
 import 'package:chat_flutter/src/connection/view/widget/connect_status_bar.dart';
 import 'package:chat_flutter/src/inject/inject.dart';
 import 'package:chat_flutter/src/user/view/bloc/server_env_cubit.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serverpod_chat_flutter/serverpod_chat_flutter.dart';
 
 import '../../chat/view/widget/channel_drawer.dart';
+import '../../connection/view/bloc/connection_bloc.dart';
+import '../../connection/view/widget/retry_connection_dialog.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -18,6 +20,13 @@ class HomePage extends StatelessWidget {
       providers: [
         BlocProvider(
           lazy: false,
+          create: (_) => getIt<ConnectionBloc>()
+            ..add(
+              ConnectionEvent.subscribe(),
+            ),
+        ),
+        BlocProvider(
+          lazy: false,
           create: (_) => getIt<ServerEnvCubit>()..init(),
         ),
         BlocProvider(
@@ -25,20 +34,34 @@ class HomePage extends StatelessWidget {
           create: (_) => getIt<ListChatControllerCubit>()..load(),
         ),
       ],
-      child: BlocBuilder<ListChatControllerCubit, ListChatControllerState>(
-        builder: (context, state) {
-          switch (state) {
-            case $InitialListChatController():
-              return _loading(context, "Init 2");
-            case $LoadingListChatController():
-              return _loading(context, "L 2");
-            case $FailureListChatController():
-              return _loading(context, "F 2");
-            case $LoadedListChatController():
-              return _MainView(
-                chatControllers: state.result,
-              );
-          }
+      child: BlocBuilder<ConnectionBloc, ConnectionState>(
+        builder: (context, connectionState) {
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: BlocBuilder<ListChatControllerCubit, ListChatControllerState>(
+                  builder: (context, state) {
+                    switch (state) {
+                      case $InitialListChatController():
+                        return _loading(context, "Init 2");
+                      case $LoadingListChatController():
+                        return _loading(context, "L 2");
+                      case $FailureListChatController():
+                        return _loading(context, "F 2");
+                      case $LoadedListChatController():
+                        return _MainView(
+                          chatControllers: state.result,
+                        );
+                    }
+                  },
+                ),
+              ),
+              if (connectionState.isReconnecting)
+                Center(
+                  child: RetryConnectionDialog(),
+                ),
+            ],
+          );
         },
       ),
     );

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:chat_client/chat_client.dart';
 import 'package:injectable/injectable.dart';
 
 import '../data/user_datasource.dart';
@@ -12,6 +13,7 @@ abstract class UserRepository {
 class UserRepositoryImpl implements UserRepository {
   final _datasource = UserDatasource();
   int? _serverEnvId;
+  UserInfo? _userInfo;
 
   @override
   FutureOr<int> getEnvId() async {
