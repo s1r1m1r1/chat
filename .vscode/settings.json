@@ -4,7 +4,7 @@
         "i_minipod/**": true,
         "chat_flutter/**": false,
         "chat_server/**": false,
-        "chat_client/**": true,
+        "chat_client/**": false,
     },
     "cSpell.dictionaries": [
         "dart",

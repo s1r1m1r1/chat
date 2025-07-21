@@ -48,14 +48,17 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i943.AuthRepositoryImpl(),
       dispose: (i) => i.dispose(),
     );
+    gh.lazySingleton<_i513.ChatRepository>(
+      () => _i513.ChatRepositoryImpl(
+        gh<_i470.UserRepository>(),
+        gh<_i943.AuthRepository>(),
+      ),
+      dispose: (i) => i.dispose(),
+    );
     gh.factory<_i480.ConnectionBloc>(
         () => _i480.ConnectionBloc(gh<_i504.ConnectionRepository>()));
     gh.factory<_i201.AuthCubit>(
         () => _i201.AuthCubit(gh<_i943.AuthRepository>()));
-    gh.lazySingleton<_i513.ChatRepository>(
-      () => _i513.ChatRepositoryImpl(gh<_i470.UserRepository>()),
-      dispose: (i) => i.dispose(),
-    );
     gh.factory<_i189.ServerEnvCubit>(
         () => _i189.ServerEnvCubit(gh<_i470.UserRepository>()));
     gh.factory<_i320.ListChatControllerCubit>(
