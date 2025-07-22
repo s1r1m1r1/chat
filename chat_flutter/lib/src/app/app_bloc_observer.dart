@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 
+import '../auth/view/bloc/auth_cubit.dart';
 import 'logger/log_colors.dart';
 
 ///  /\_/\
@@ -13,32 +15,38 @@ class MyBlocObserver extends BlocObserver {
   late final _logger = Logger(loggerName);
 
   @override
-  void onEvent(Bloc bloc, Object? event) {
-    _logger.fine(': ${bloc.runtimeType}:\nevent: $event');
-    super.onEvent(bloc, event);
-  }
-
-  @override
   void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
-    _logger.severe(': ${bloc.runtimeType}:\n${red}err$reset:', error, stackTrace);
+    _logger.severe(
+        ':${bloc.runtimeType}:\n'
+        '${red}err$reset:',
+        error,
+        stackTrace);
     super.onError(bloc, error, stackTrace);
   }
 
-  // @override
-  // void onChange(BlocBase bloc, Change change) {
-  //   _logger.info(': ${bloc.runtimeType}:\nstate: ${change.nextState}');
-  //   super.onChange(bloc, change);
-  // }
   @override
   void onTransition(Bloc bloc, Transition transition) {
-    _logger.info('${bloc.runtimeType}:\n'
-        'event: ${transition.event}\n'
-        'state: ${transition.nextState}');
+    if (kDebugMode) {
+      /* UNCOMMENT IF YOU NEED TO FILTER SPECIFIC BLOCS
+         JUST COPY LINE AND RENAME WHAT YOU WANT */
+      if (bloc is! AuthCubit) return;
+      // if(bloc is! OtherCubit) return;
+      _logger.info('${bloc.runtimeType}:\n'
+          'event: ${transition.event}\n'
+          'state: ${transition.nextState}');
+    }
     super.onTransition(bloc, transition);
   }
 
   @override
   void onCreate(BlocBase bloc) {
+    if (kDebugMode) _logger.info('${bloc.runtimeType} onCreate()');
     super.onCreate(bloc);
+  }
+
+  @override
+  void onClose(BlocBase bloc) {
+    if (kDebugMode) _logger.info('${bloc.runtimeType} onClose()');
+    super.onClose(bloc);
   }
 }

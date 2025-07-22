@@ -11,6 +11,8 @@ GoRouter buildRouter(BuildContext context) {
     debugLogDiagnostics: true,
     routes: $appRoutes,
     initialLocation: SignInRoute.path,
+
+    /// that works because with ChangeNotifier mixin
     refreshListenable: context.read<AuthCubit>(),
     redirect: (context, state) {
       final authStatus = context.read<AuthCubit>().state;

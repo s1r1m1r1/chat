@@ -24,7 +24,7 @@ class App extends StatelessWidget {
         ),
       ],
       child: Builder(builder: (context) {
-        // ROUTER BUILDER , I have to see it
+        // buildRouter(context, YOU HAVE TO SEE IT, iT'S IMPORTANT PART
         return _AppView(buildRouter(context));
       }),
     );
