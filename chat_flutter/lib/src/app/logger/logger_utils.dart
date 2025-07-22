@@ -12,7 +12,7 @@ void watchRecords(LogRecord rec) {
     return;
   }
   if (kDebugMode) {
-    // reset level for all logger
+    // force reset level logger
     // Logger(Name.loggerName).level = Level.ALL;
   }
   debugPrint('\n${rec.level.color}:${rec.loggerName}:${rec.message}');

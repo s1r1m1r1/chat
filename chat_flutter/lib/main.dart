@@ -14,27 +14,7 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 //  > ^ <
 //  LETS START
 void main() async {
-  // Need to call this as SessionManager is using Flutter bindings before runApp
-  // is called.
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Sets up a singleton client object that can be used to talk to the server
-  // from anywhere in our app. The client is generated from your server code.
-  // The client is set up to connect to a Serverpod running on a local server on
-  // the default port. You will need to modify this to connect to staging or
-  // production servers.
-  // client = Client(
-  //   'http://$localhost:8080/',
-  //   authenticationKeyManager: FlutterAuthenticationKeyManager(),
-  // )..connectivityMonitor = FlutterConnectivityMonitor();
-
-  // The session manager keeps track of the signed-in state of the user. You
-  // can query it to see if the user is currently signed in and get information
-  // about the user.
-  // sessionManager = SessionManager(
-  //   caller: client.modules.auth,
-  // );
-  //
   await configureDependencies();
   Bloc.observer = MyBlocObserver();
   hierarchicalLoggingEnabled = true;
@@ -54,6 +34,7 @@ void main() async {
       label: '${red}FlutterError.onError$reset${details.exception}',
     );
   };
-  if (kIsWeb) usePathUrlStrategy();
+  // no # hash for web , and with # on native
+  usePathUrlStrategy();
   runApp(const App());
 }
