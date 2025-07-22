@@ -21,18 +21,26 @@ void main() async {
   Logger.root.onRecord.listen(watchRecords);
 
   PlatformDispatcher.instance.onError = (error, stack) {
-    debugPrintStack(
-      stackTrace: stack,
-      label: '${red}PlatformDispatcher$reset$error',
-    );
+    if (kDebugMode) {
+      debugPrintStack(
+        stackTrace: stack,
+        label: '${red}PlatformDispatcher$reset$error',
+      );
+    } else {
+      // Sentry.captureException(details.exception, stackTrace: details.stack);
+      // FirebaseCrashlytics.instance.recordError(details.exception, details.stack);
+    }
     return true;
   };
 
   FlutterError.onError = (details) {
-    debugPrintStack(
-      stackTrace: details.stack,
-      label: '${red}FlutterError.onError$reset${details.exception}',
-    );
+    if (kDebugMode) {
+      // In debug mode, simply print the error to the console
+      FlutterError.dumpErrorToConsole(details);
+    } else {
+      // Sentry.captureException(details.exception, stackTrace: details.stack);
+      // FirebaseCrashlytics.instance.recordError(details.exception, details.stack);
+    }
   };
   // no # hash for web , and with # on native
   usePathUrlStrategy();
