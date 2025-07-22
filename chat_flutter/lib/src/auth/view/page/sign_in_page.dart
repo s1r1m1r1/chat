@@ -1,3 +1,4 @@
+import 'package:chat_client/chat_client.dart';
 import 'package:chat_flutter/main.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,12 +7,14 @@ import 'package:serverpod_auth_email_flutter/serverpod_auth_email_flutter.dart';
 import 'package:serverpod_auth_google_flutter/serverpod_auth_google_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart' as googleSignin;
 import '../../../../env_keys.dart';
+import '../../../inject/inject.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({super.key});
 
   @override
   Widget build(context) {
+    final client = getIt<Client>();
     return Scaffold(
       body: Container(
         color: Colors.white,
@@ -25,17 +28,15 @@ class SignInPage extends StatelessWidget {
                 SignInWithEmailButton(
                   caller: client.modules.auth,
                 ),
-                () {
-                  return SignInWithGoogleButton(
-                    caller: client.modules.auth,
-                    clientId: kIsWeb ? null : googleClientId, // Client ID of the client (null on web)
-                    serverClientId: googleWebClientId, // Client ID from the server (required on web)
-                    redirectUri: Uri.parse('http://localhost:8082/googlesignin'),
-                    onFailure: () {
-                      debugPrint("\n\nFailure GOOGLE\n\n");
-                    },
-                  );
-                }(),
+                SignInWithGoogleButton(
+                  caller: client.modules.auth,
+                  clientId: kIsWeb ? null : googleClientId, // Client ID of the client (null on web)
+                  serverClientId: googleWebClientId, // Client ID from the server (required on web)
+                  redirectUri: Uri.parse('http://localhost:8082/googlesignin'),
+                  onFailure: () {
+                    debugPrint("\n\nFailure GOOGLE\n\n");
+                  },
+                ),
                 SignInWithAppleButton(
                   onFailure: () {
                     debugPrint("\n\nFailure APPLE\n\n");

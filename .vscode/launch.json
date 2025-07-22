@@ -22,7 +22,30 @@
             "args": [
                 "--web-port",
                 "49660"
+            ],
+            "toolArgs": [ // This is where you can pass environment variables to the Flutter run command
+                "--dart-define=GOOGLE_WEB_CLIENT_ID=883257193716-7pp3vt05kc38nidb3vo98jq18k5m8v8q.apps.googleusercontent.com"
+            ]
+        },
+        {
+            "name": "Chat App Android",
+            "request": "launch",
+            "type": "dart",
+            "program": "chat_flutter/lib/main.dart",
+            "deviceId": "android", // or a specific Android device ID
+            "toolArgs": [
+                "--dart-define=GOOGLE_ANDROID_CLIENT_ID=883257193716-f9skv2m4d4qhi72oviuiee8m9da5o31d.apps.googleusercontent.com"
+            ]
+        },
+        {
+            "name": "Chat App iOS",
+            "request": "launch",
+            "type": "dart",
+            "program": "chat_flutter/lib/main.dart",
+            "deviceId": "iphone", // or a specific iOS device ID
+            "toolArgs": [
+                "--dart-define=GOOGLE_APPLE_CLIENT_ID=883257193716-ncebu04s8qc13cm298795976e5rbm2vm.apps.googleusercontent.com"
             ]
         }
-    ],
+    ]
 }

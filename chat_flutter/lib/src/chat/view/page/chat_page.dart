@@ -1,8 +1,12 @@
 import 'package:chat_flutter/main.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
+import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart' show SessionManager;
 import 'package:serverpod_chat_flutter/serverpod_chat_flutter.dart';
 import 'package:custom_clippers/custom_clippers.dart';
 import 'package:custom_text/custom_text.dart';
+
+import '../../../inject/inject.dart';
 
 /// Shows the ChatView and ChatInput for a chat controller.
 class ChatPage extends StatelessWidget {
@@ -16,7 +20,7 @@ class ChatPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MediaQueryData mq = MediaQuery.of(context);
-
+    final sessionManager = getIt<SessionManager>();
     return Column(
       children: [
         Expanded(
@@ -82,15 +86,17 @@ class _MessageBoxState extends State<_MessageBox> with SingleTickerProviderState
   @override
   Widget build(BuildContext context) {
     final messageStyle = TextStyle(color: Colors.black, fontSize: 14);
+    final log = Logger('_MessageBox');
+    log.info('imageUrl ${widget.avatarUrl}');
     final leading = Container(
       width: 30,
       height: 30,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.red,
-        image: widget.avatarUrl != null ? DecorationImage(image: NetworkImage(widget.avatarUrl!)) : null,
-      ),
+      // clipBehavior: Clip.antiAlias,
+      // decoration: BoxDecoration(
+      //   shape: BoxShape.circle,
+      //   color: Colors.red,
+      //   image: widget.avatarUrl != null ? DecorationImage(image: NetworkImage(widget.avatarUrl!)) : null,
+      // ),
     );
     return LayoutBuilder(builder: (context, constraint) {
       // Row(children: rowKids)

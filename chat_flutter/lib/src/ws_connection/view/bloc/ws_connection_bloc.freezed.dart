@@ -4,7 +4,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'connection_bloc.dart';
+part of 'ws_connection_bloc.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,11 +14,11 @@ part of 'connection_bloc.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$ConnectionEvent {
+mixin _$WsConnectionEvent {
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is ConnectionEvent);
+        (other.runtimeType == runtimeType && other is WsConnectionEvent);
   }
 
   @override
@@ -26,13 +26,13 @@ mixin _$ConnectionEvent {
 
   @override
   String toString() {
-    return 'ConnectionEvent()';
+    return 'WsConnectionEvent()';
   }
 }
 
 /// @nodoc
 
-class _Subscribe extends ConnectionEvent {
+class _Subscribe extends WsConnectionEvent {
   const _Subscribe() : super._();
 
   @override
@@ -46,13 +46,13 @@ class _Subscribe extends ConnectionEvent {
 
   @override
   String toString() {
-    return 'ConnectionEvent.subscribe()';
+    return 'WsConnectionEvent.subscribe()';
   }
 }
 
 /// @nodoc
 
-class _InternetStatusChanged extends ConnectionEvent {
+class _InternetStatusChanged extends WsConnectionEvent {
   const _InternetStatusChanged(this.status) : super._();
 
   final InternetStatus status;
@@ -70,13 +70,13 @@ class _InternetStatusChanged extends ConnectionEvent {
 
   @override
   String toString() {
-    return 'ConnectionEvent.internetStatusChanged(status: $status)';
+    return 'WsConnectionEvent.internetStatusChanged(status: $status)';
   }
 }
 
 /// @nodoc
 
-class _ServerStatusChanged extends ConnectionEvent {
+class _ServerStatusChanged extends WsConnectionEvent {
   const _ServerStatusChanged(this.status) : super._();
 
   final ServerStatus status;
@@ -94,13 +94,13 @@ class _ServerStatusChanged extends ConnectionEvent {
 
   @override
   String toString() {
-    return 'ConnectionEvent.serverStatusChanged(status: $status)';
+    return 'WsConnectionEvent.serverStatusChanged(status: $status)';
   }
 }
 
 /// @nodoc
 
-class _RetryConnection extends ConnectionEvent {
+class _RetryConnection extends WsConnectionEvent {
   const _RetryConnection() : super._();
 
   @override
@@ -114,13 +114,13 @@ class _RetryConnection extends ConnectionEvent {
 
   @override
   String toString() {
-    return 'ConnectionEvent.retryConnection()';
+    return 'WsConnectionEvent.retryConnection()';
   }
 }
 
 /// @nodoc
 
-class _Reconnect extends ConnectionEvent {
+class _Reconnect extends WsConnectionEvent {
   const _Reconnect() : super._();
 
   @override
@@ -134,30 +134,30 @@ class _Reconnect extends ConnectionEvent {
 
   @override
   String toString() {
-    return 'ConnectionEvent.reconnect()';
+    return 'WsConnectionEvent.reconnect()';
   }
 }
 
 /// @nodoc
-mixin _$ConnectionState {
+mixin _$WsConnectionState {
   InternetStatus get internetStatus;
   ServerStatus get serverStatus;
   bool get isReconnecting;
   int get reconnectAttempt;
 
-  /// Create a copy of ConnectionState
+  /// Create a copy of WsConnectionState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $ConnectionStateCopyWith<ConnectionState> get copyWith =>
-      _$ConnectionStateCopyWithImpl<ConnectionState>(
-          this as ConnectionState, _$identity);
+  $WsConnectionStateCopyWith<WsConnectionState> get copyWith =>
+      _$WsConnectionStateCopyWithImpl<WsConnectionState>(
+          this as WsConnectionState, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is ConnectionState &&
+            other is WsConnectionState &&
             (identical(other.internetStatus, internetStatus) ||
                 other.internetStatus == internetStatus) &&
             (identical(other.serverStatus, serverStatus) ||
@@ -174,15 +174,15 @@ mixin _$ConnectionState {
 
   @override
   String toString() {
-    return 'ConnectionState(internetStatus: $internetStatus, serverStatus: $serverStatus, isReconnecting: $isReconnecting, reconnectAttempt: $reconnectAttempt)';
+    return 'WsConnectionState(internetStatus: $internetStatus, serverStatus: $serverStatus, isReconnecting: $isReconnecting, reconnectAttempt: $reconnectAttempt)';
   }
 }
 
 /// @nodoc
-abstract mixin class $ConnectionStateCopyWith<$Res> {
-  factory $ConnectionStateCopyWith(
-          ConnectionState value, $Res Function(ConnectionState) _then) =
-      _$ConnectionStateCopyWithImpl;
+abstract mixin class $WsConnectionStateCopyWith<$Res> {
+  factory $WsConnectionStateCopyWith(
+          WsConnectionState value, $Res Function(WsConnectionState) _then) =
+      _$WsConnectionStateCopyWithImpl;
   @useResult
   $Res call(
       {InternetStatus internetStatus,
@@ -192,14 +192,14 @@ abstract mixin class $ConnectionStateCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ConnectionStateCopyWithImpl<$Res>
-    implements $ConnectionStateCopyWith<$Res> {
-  _$ConnectionStateCopyWithImpl(this._self, this._then);
+class _$WsConnectionStateCopyWithImpl<$Res>
+    implements $WsConnectionStateCopyWith<$Res> {
+  _$WsConnectionStateCopyWithImpl(this._self, this._then);
 
-  final ConnectionState _self;
-  final $Res Function(ConnectionState) _then;
+  final WsConnectionState _self;
+  final $Res Function(WsConnectionState) _then;
 
-  /// Create a copy of ConnectionState
+  /// Create a copy of WsConnectionState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -232,8 +232,8 @@ class _$ConnectionStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _ConnectionState extends ConnectionState {
-  const _ConnectionState(
+class _WsConnectionState extends WsConnectionState {
+  const _WsConnectionState(
       {required this.internetStatus,
       required this.serverStatus,
       this.isReconnecting = false,
@@ -251,19 +251,19 @@ class _ConnectionState extends ConnectionState {
   @JsonKey()
   final int reconnectAttempt;
 
-  /// Create a copy of ConnectionState
+  /// Create a copy of WsConnectionState
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$ConnectionStateCopyWith<_ConnectionState> get copyWith =>
-      __$ConnectionStateCopyWithImpl<_ConnectionState>(this, _$identity);
+  _$WsConnectionStateCopyWith<_WsConnectionState> get copyWith =>
+      __$WsConnectionStateCopyWithImpl<_WsConnectionState>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _ConnectionState &&
+            other is _WsConnectionState &&
             (identical(other.internetStatus, internetStatus) ||
                 other.internetStatus == internetStatus) &&
             (identical(other.serverStatus, serverStatus) ||
@@ -280,16 +280,16 @@ class _ConnectionState extends ConnectionState {
 
   @override
   String toString() {
-    return 'ConnectionState(internetStatus: $internetStatus, serverStatus: $serverStatus, isReconnecting: $isReconnecting, reconnectAttempt: $reconnectAttempt)';
+    return 'WsConnectionState(internetStatus: $internetStatus, serverStatus: $serverStatus, isReconnecting: $isReconnecting, reconnectAttempt: $reconnectAttempt)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$ConnectionStateCopyWith<$Res>
-    implements $ConnectionStateCopyWith<$Res> {
-  factory _$ConnectionStateCopyWith(
-          _ConnectionState value, $Res Function(_ConnectionState) _then) =
-      __$ConnectionStateCopyWithImpl;
+abstract mixin class _$WsConnectionStateCopyWith<$Res>
+    implements $WsConnectionStateCopyWith<$Res> {
+  factory _$WsConnectionStateCopyWith(
+          _WsConnectionState value, $Res Function(_WsConnectionState) _then) =
+      __$WsConnectionStateCopyWithImpl;
   @override
   @useResult
   $Res call(
@@ -300,14 +300,14 @@ abstract mixin class _$ConnectionStateCopyWith<$Res>
 }
 
 /// @nodoc
-class __$ConnectionStateCopyWithImpl<$Res>
-    implements _$ConnectionStateCopyWith<$Res> {
-  __$ConnectionStateCopyWithImpl(this._self, this._then);
+class __$WsConnectionStateCopyWithImpl<$Res>
+    implements _$WsConnectionStateCopyWith<$Res> {
+  __$WsConnectionStateCopyWithImpl(this._self, this._then);
 
-  final _ConnectionState _self;
-  final $Res Function(_ConnectionState) _then;
+  final _WsConnectionState _self;
+  final $Res Function(_WsConnectionState) _then;
 
-  /// Create a copy of ConnectionState
+  /// Create a copy of WsConnectionState
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -317,7 +317,7 @@ class __$ConnectionStateCopyWithImpl<$Res>
     Object? isReconnecting = null,
     Object? reconnectAttempt = null,
   }) {
-    return _then(_ConnectionState(
+    return _then(_WsConnectionState(
       internetStatus: null == internetStatus
           ? _self.internetStatus
           : internetStatus // ignore: cast_nullable_to_non_nullable

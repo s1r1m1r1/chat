@@ -3,7 +3,11 @@ import 'package:get_it/get_it.dart';
 
 import 'inject.config.dart';
 
+///  /\_/\
+/// ( o.o )
+///  > ^ <
+
 final getIt = GetIt.instance;
 
 @InjectableInit()
-void configureDependencies() => getIt.init();
+Future<void> configureDependencies() => getIt.init();

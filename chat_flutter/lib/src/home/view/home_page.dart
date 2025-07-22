@@ -1,6 +1,6 @@
 import 'package:chat_flutter/src/chat/view/cubit/list_chat_controller_cubit.dart';
 import 'package:chat_flutter/src/chat/view/page/chat_page.dart';
-import 'package:chat_flutter/src/connection/view/widget/connect_status_bar.dart';
+import 'package:chat_flutter/src/ws_connection/view/widget/connect_status_bar.dart';
 import 'package:chat_flutter/src/inject/inject.dart';
 import 'package:chat_flutter/src/user/view/bloc/server_env_cubit.dart';
 import 'package:flutter/material.dart' hide ConnectionState;
@@ -8,8 +8,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serverpod_chat_flutter/serverpod_chat_flutter.dart';
 
 import '../../chat/view/widget/channel_drawer.dart';
-import '../../connection/view/bloc/connection_bloc.dart';
-import '../../connection/view/widget/retry_connection_dialog.dart';
+import '../../ws_connection/view/bloc/ws_connection_bloc.dart';
+import '../../ws_connection/view/widget/retry_connection_dialog.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -20,9 +20,9 @@ class HomePage extends StatelessWidget {
       providers: [
         BlocProvider(
           lazy: false,
-          create: (_) => getIt<ConnectionBloc>()
+          create: (_) => getIt<WsConnectionBloc>()
             ..add(
-              ConnectionEvent.subscribe(),
+              WsConnectionEvent.subscribe(),
             ),
         ),
         BlocProvider(
@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
           create: (_) => getIt<ListChatControllerCubit>()..load(),
         ),
       ],
-      child: BlocBuilder<ConnectionBloc, ConnectionState>(
+      child: BlocBuilder<WsConnectionBloc, WsConnectionState>(
         builder: (context, connectionState) {
           return Stack(
             children: [

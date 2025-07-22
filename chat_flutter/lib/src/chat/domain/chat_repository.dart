@@ -5,6 +5,7 @@ import 'package:chat_flutter/src/auth/domain/auth_repository.dart';
 import 'package:chat_flutter/src/auth/domain/auth_status.dart';
 import 'package:chat_flutter/src/user/domain/user_repository.dart';
 import 'package:injectable/injectable.dart';
+import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 import 'package:serverpod_chat_flutter/serverpod_chat_flutter.dart';
 
 import '../../../main.dart';
@@ -16,9 +17,11 @@ abstract class ChatRepository {
 
 @LazySingleton(as: ChatRepository)
 class ChatRepositoryImpl implements ChatRepository {
+  final Client _client;
+  final SessionManager _sessionManager;
   final UserRepository _userRepository;
   final AuthRepository _auth;
-  ChatRepositoryImpl(this._userRepository, this._auth);
+  ChatRepositoryImpl(this._userRepository, this._auth, this._client, this._sessionManager);
   List<Channel>? _channels;
   final List<ChatController> _chatControllers = [];
 
@@ -44,8 +47,8 @@ class ChatRepositoryImpl implements ChatRepository {
     for (var channel in _channels!) {
       var controller = ChatController(
         channel: channel.channel,
-        module: client.modules.chat,
-        sessionManager: sessionManager,
+        module: _client.modules.chat,
+        sessionManager: _sessionManager,
       );
       _chatControllers.add(controller);
     }
@@ -55,6 +58,6 @@ class ChatRepositoryImpl implements ChatRepository {
   Future<List<Channel>> _getChannels() async {
     _auth.authStatus.ensureLoggedIn();
     final envId = await _userRepository.getEnvId();
-    return client.channels.getChannels(environmentId: envId);
+    return _client.channels.getChannels(environmentId: envId);
   }
 }

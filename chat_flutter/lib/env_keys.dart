@@ -1,12 +1,15 @@
 import 'package:flutter/foundation.dart';
 
-final googleWebClientId = r"883257193716-7pp3vt05kc38nidb3vo98jq18k5m8v8q.apps.googleusercontent.com";
-
-final googleAppleClientId = r"883257193716-ncebu04s8qc13cm298795976e5rbm2vm.apps.googleusercontent.com";
-final googleAndroidClientID = r"883257193716-f9skv2m4d4qhi72oviuiee8m9da5o31d.apps.googleusercontent.com";
 String get googleClientId {
-  if (kIsWeb) return googleWebClientId;
-  if (defaultTargetPlatform == TargetPlatform.android) return googleAndroidClientID;
-  if (defaultTargetPlatform == TargetPlatform.iOS) return googleAppleClientId;
+  if (kIsWeb) {
+    // Access the value defined with --dart-define in launch.json
+    return const String.fromEnvironment('GOOGLE_WEB_CLIENT_ID', defaultValue: 'YOUR_WEB_CLIENT_ID_FALLBACK');
+  }
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    return const String.fromEnvironment('GOOGLE_ANDROID_CLIENT_ID', defaultValue: 'YOUR_ANDROID_CLIENT_ID_FALLBACK');
+  }
+  if (defaultTargetPlatform == TargetPlatform.iOS) {
+    return const String.fromEnvironment('GOOGLE_APPLE_CLIENT_ID', defaultValue: 'YOUR_APPLE_CLIENT_ID_FALLBACK');
+  }
   throw Exception('Unsupported platform');
 }
