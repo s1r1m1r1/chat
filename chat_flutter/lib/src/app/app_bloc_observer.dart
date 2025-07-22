@@ -3,6 +3,10 @@ import 'package:logging/logging.dart';
 
 import 'logger/log_colors.dart';
 
+///  /\_/\
+/// ( o.o )
+///  > ^ <
+
 class MyBlocObserver extends BlocObserver {
   static const String loggerName = 'BlocObserver';
   MyBlocObserver();

@@ -1,7 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:serverpod_auth_google_flutter/serverpod_auth_google_flutter.dart';
 
-import '../../../main.dart';
 import 'auth_status.dart';
 
 abstract class AuthRepository {
@@ -14,7 +14,8 @@ abstract class AuthRepository {
 
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl extends AuthRepository {
-  AuthRepositoryImpl() {
+  final SessionManager _sessionManager;
+  AuthRepositoryImpl(this._sessionManager) {
     init();
   }
 
@@ -22,20 +23,20 @@ class AuthRepositoryImpl extends AuthRepository {
 
   @override
   void init() {
-    sessionManager.addListener(_onChangeSessionStatus);
+    _sessionManager.addListener(_onChangeSessionStatus);
   }
 
   @override
   Stream<AuthStatus> get authStatusStream => _authStatusSbj.stream;
 
   void _onChangeSessionStatus() {
-    _authStatusSbj.value = sessionManager.isSignedIn ? AuthStatus.loggedIn : AuthStatus.loggedOut;
+    _authStatusSbj.value = _sessionManager.isSignedIn ? AuthStatus.loggedIn : AuthStatus.loggedOut;
   }
 
   @override
   @disposeMethod
   void dispose() {
-    sessionManager.removeListener(_onChangeSessionStatus);
+    _sessionManager.removeListener(_onChangeSessionStatus);
   }
 
   @override

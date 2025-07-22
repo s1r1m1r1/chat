@@ -8,6 +8,10 @@ import '../inject/inject.dart';
 import '../l10n/app_localizations.dart';
 import 'router/build_router.dart';
 
+//   O    IT'S APPLICATION BRO
+//  /|\
+//  / \
+
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -20,6 +24,7 @@ class App extends StatelessWidget {
         ),
       ],
       child: Builder(builder: (context) {
+        // ROUTER BUILDER , I have to see it
         return _AppView(buildRouter(context));
       }),
     );

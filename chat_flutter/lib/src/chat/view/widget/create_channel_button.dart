@@ -1,7 +1,7 @@
+import 'package:chat_client/chat_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../main.dart';
 import '../../../inject/inject.dart';
 import '../../../user/view/bloc/server_env_cubit.dart';
 import 'create_channel_input.dart';
@@ -26,8 +26,9 @@ class CreateChannelButton extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => CreateChannelInput(
-                              onAddChannel: (name) =>
-                                  client.channels.createChannel(name: name, channel: name, environmentId: state.id),
+                              onAddChannel: (name) => getIt<Client>()
+                                  .channels
+                                  .createChannel(name: name, channel: name, environmentId: state.id),
                             )));
                   },
                   child: const Text('New Channel'));

@@ -1,6 +1,8 @@
 // The _ChannelDrawer displays a list of chat channels.
+import 'package:chat_client/chat_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 import 'package:serverpod_chat_flutter/serverpod_chat_flutter.dart';
 
 import '../../../../main.dart';
@@ -71,7 +73,7 @@ class ChannelDrawer extends StatelessWidget {
   }
 
   void _signOut() {
-    sessionManager.signOutDevice();
+    getIt<SessionManager>().signOutDevice();
   }
 }
 
@@ -95,8 +97,9 @@ class CreateChannelButton extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => CreateChannelInput(
-                              onAddChannel: (name) =>
-                                  client.channels.createChannel(name: name, channel: name, environmentId: state.id),
+                              onAddChannel: (name) => getIt<Client>()
+                                  .channels
+                                  .createChannel(name: name, channel: name, environmentId: state.id),
                             )));
                   },
                   child: const Text('New Channel'));

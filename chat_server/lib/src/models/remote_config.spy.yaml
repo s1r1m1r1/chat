@@ -1,0 +1,4 @@
+## Represents a chat channel.
+class: RemoteConfig 
+fields:
+  requireVersion: String

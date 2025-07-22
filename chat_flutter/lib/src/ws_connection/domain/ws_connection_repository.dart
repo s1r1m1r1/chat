@@ -1,15 +1,14 @@
 // connection_repository.dart
 import 'dart:async';
 
-import 'package:chat_client/chat_client.dart';
+import 'package:chat_client/chat_client.dart' show Client;
 import 'package:flutter/material.dart' show debugPrint;
 import 'package:injectable/injectable.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:serverpod_client/serverpod_client.dart' show StreamingConnectionStatus;
 
-import '../../../main.dart'; // Assuming 'client' is accessible via main.dart
-
-abstract class ConnectionRepository {
+abstract class WsConnectionRepository {
   Stream<InternetStatus> get internetStatus;
   Stream<ServerStatus> get serverStatus;
   Future<InternetStatus> getCurrentInternetStatus(); // Added for initial sync
@@ -23,9 +22,10 @@ abstract class ConnectionRepository {
   Future<void> dispose();
 }
 
-@LazySingleton(as: ConnectionRepository)
-class ConnectionRepositoryImpl extends ConnectionRepository {
-  ConnectionRepositoryImpl() {
+@LazySingleton(as: WsConnectionRepository)
+class WSConnectionRepositoryImpl extends WsConnectionRepository {
+  final Client _client;
+  WSConnectionRepositoryImpl(this._client) {
     init(); // Call init immediately on creation
   }
 
@@ -38,14 +38,14 @@ class ConnectionRepositoryImpl extends ConnectionRepository {
   @override
   void init() {
     // Only add listeners here. No connection attempts.
-    client.addStreamingConnectionStatusListener(_changedConnectionStatus);
+    _client.addStreamingConnectionStatusListener(_changedConnectionStatus);
     _listenInternetStatus();
   }
 
   // Maps chat client's status to our ServerStatus enum
   void _changedConnectionStatus() {
     ServerStatus newStatus;
-    switch (client.streamingConnectionStatus) {
+    switch (_client.streamingConnectionStatus) {
       case StreamingConnectionStatus.disconnected:
         newStatus = ServerStatus.disconnected;
         break;
@@ -65,14 +65,14 @@ class ConnectionRepositoryImpl extends ConnectionRepository {
 
   @override
   Future<void> openStreamingConnection() async {
-    if (client.streamingConnectionStatus == StreamingConnectionStatus.disconnected) {
-      await client.openStreamingConnection();
+    if (_client.streamingConnectionStatus == StreamingConnectionStatus.disconnected) {
+      await _client.openStreamingConnection();
     }
   }
 
   @override
   Future<void> closeStreamingConnection() async {
-    await client.closeStreamingConnection();
+    await _client.closeStreamingConnection();
   }
 
   @override
@@ -104,8 +104,8 @@ class ConnectionRepositoryImpl extends ConnectionRepository {
     _internetStatusSbj.close();
     _connectivitySubscription?.cancel();
     // Ensure client resources are properly released
-    client.removeStreamingConnectionStatusListener(_changedConnectionStatus);
-    await client.closeStreamingConnection(); // Ensure client is closed on dispose
+    _client.removeStreamingConnectionStatusListener(_changedConnectionStatus);
+    await _client.closeStreamingConnection(); // Ensure client is closed on dispose
   }
 
   @override

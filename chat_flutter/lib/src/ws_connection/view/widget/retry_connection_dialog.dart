@@ -1,4 +1,4 @@
-import 'package:chat_flutter/src/connection/view/bloc/connection_bloc.dart';
+import 'package:chat_flutter/src/ws_connection/view/bloc/ws_connection_bloc.dart';
 import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -7,7 +7,7 @@ class RetryConnectionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ConnectionBloc, ConnectionState>(
+    return BlocBuilder<WsConnectionBloc, WsConnectionState>(
       builder: (context, state) {
         return Material(
           type: MaterialType.transparency,
@@ -63,7 +63,7 @@ class RetryConnectionDialog extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: state.isReconnecting
                             ? null
-                            : () => context.read<ConnectionBloc>().add(ConnectionEvent.retryConnection()),
+                            : () => context.read<WsConnectionBloc>().add(WsConnectionEvent.retryConnection()),
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               state.isReconnecting ? Colors.grey[400] : const Color(0xFF2563EB), // blue-600
